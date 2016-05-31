@@ -2,10 +2,12 @@ package au.com.ifti.controllers;
 
 import java.util.regex.Matcher;
 
+import au.com.ifti.models.Model;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
 public abstract class Controller {
+  protected Model model;
   protected TiramisuRequest request;
   protected TiramisuResponse response;
   
@@ -13,22 +15,31 @@ public abstract class Controller {
     this.request = request;
     this.response = response;
   }
-  
+
+  public Model getModel() {
+    return model;
+  }
+
   public TiramisuRequest getRequest() {
     return request;
+  }
+  
+  public TiramisuResponse getResponse() {
+    return response;
+  }
+
+  public void setModel(Model model) {
+    this.model = model;
   }
 
   public void setRequest(TiramisuRequest request) {
     this.request = request;
   }
 
-  public TiramisuResponse getResponse() {
-    return response;
-  }
-
   public void setResponse(TiramisuResponse response) {
     this.response = response;
   }
-
+  
   public abstract void run(Matcher matcher);
+  
 }
