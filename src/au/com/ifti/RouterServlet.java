@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import au.com.ifti.utilities.HibernateUtil;
+
 /**
  * Servlet implementation class Router
  */
@@ -25,6 +27,15 @@ public class RouterServlet extends HttpServlet {
   protected void service(HttpServletRequest request, HttpServletResponse response) {
     UrlDispatcher dispatcher = new UrlDispatcher();
     dispatcher.dispatch(request, response);
+  }
+  
+  /**
+   * Clean up the database connection from Hibernate.
+   */
+  @Override
+  public void destroy()
+  {
+      HibernateUtil.tearDownORM();
   }
 
 }
