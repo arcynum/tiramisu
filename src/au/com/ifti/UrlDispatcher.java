@@ -11,11 +11,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import au.com.ifti.controllers.AdminController;
-import au.com.ifti.controllers.DbmsController;
-import au.com.ifti.controllers.ReportController;
-import au.com.ifti.controllers.ServerController;
-import au.com.ifti.controllers.TagController;
+import au.com.ifti.controllers.*;
 import au.com.ifti.exceptions.BadRequestException;
 import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.utilities.TiramisuRequest;
@@ -32,13 +28,11 @@ public class UrlDispatcher {
    * Dispatching constructor, currently building the route list by hand in this function.
    */
   public UrlDispatcher() {
-    routes.add(new Route(Pattern.compile("^/Tiramisu/admin[/]?"), AdminController.class, "run"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/(?<dbms>[0-9]{1,})[/]?"), DbmsController.class, "run"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/(?<dbms>[0-9]{1,})/(?<server>[0-9]{1,})[/]?"), ServerController.class, "run"));
-    
-    routes.add(new Route(Pattern.compile("^/Tiramisu/Reports[/]?"), ReportController.class, "run"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/Reports/(?<id>[0-9]{1,})[/]?"), ReportController.class, "view"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/Tags[/]?"), TagController.class, "run"));
+    routes.add(new Route(Pattern.compile("^/Tiramisu/reports[/]?"), ReportController.class, "index"));
+    routes.add(new Route(Pattern.compile("^/Tiramisu/reports/(?<id>[0-9]{1,})[/]?"), ReportController.class, "view"));
+    routes.add(new Route(Pattern.compile("^/Tiramisu/reports/add[/]?"), ReportController.class, "add"));
+    routes.add(new Route(Pattern.compile("^/Tiramisu/reports/edit/(?<id>[0-9]{1,})[/]?"), ReportController.class, "edit"));
+    routes.add(new Route(Pattern.compile("^/Tiramisu/reports/delete/(?<id>[0-9]{1,})[/]?"), ReportController.class, "delete"));
   }
   
   /**

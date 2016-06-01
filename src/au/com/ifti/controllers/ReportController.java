@@ -1,5 +1,6 @@
 package au.com.ifti.controllers;
 
+import java.util.List;
 import java.util.regex.Matcher;
 
 import au.com.ifti.exceptions.NotFoundException;
@@ -14,10 +15,15 @@ public class ReportController extends Controller {
     super(request, response);
     this.model = new ReportModel();
   }
-
-  @Override
-  public void run(Matcher matcher) {
-    this.response.getWriter().append("<h1>Hit the run method in the report controller</h1>");
+  
+  public void index(Matcher matcher) {
+    List<?> reports = this.model.findAll();
+    for (Object object : reports) {
+      if (object instanceof Report) {
+        Report report = (Report) object;
+        this.response.getWriter().append(String.format("%d: %s", report.getId(), report.getName()));
+      }
+    }
   }
   
   public void view(Matcher matcher) throws NotFoundException {

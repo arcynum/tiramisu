@@ -14,7 +14,7 @@ public abstract class Model {
     this.session = HibernateUtil.getORMSessionFactory().openSession();
   }
   
-  public List<?> find(String keyword) {
+  public List<?> findAll() {
     this.session.beginTransaction();
     List<?> result = this.session.createQuery(String.format("from %s", this.name)).list();
     this.session.getTransaction().commit();

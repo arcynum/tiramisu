@@ -5,9 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 public class TiramisuRequest {
   
   private String requestUri;
+  private String method;
   
   public TiramisuRequest(HttpServletRequest request) {
-    setRequestUri(request.getRequestURI());
+    this.setRequestUri(request.getRequestURI());
+    this.setMethod(request.getMethod());
   }
 
   public String getRequestUri() {
@@ -16,6 +18,14 @@ public class TiramisuRequest {
 
   public void setRequestUri(String requestUri) {
     this.requestUri = requestUri;
+  }
+
+  public String getMethod() {
+    return method;
+  }
+
+  public void setMethod(String method) {
+    this.method = method;
   }
 
 }

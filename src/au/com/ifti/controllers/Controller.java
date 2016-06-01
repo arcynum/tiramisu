@@ -1,7 +1,5 @@
 package au.com.ifti.controllers;
 
-import java.util.regex.Matcher;
-
 import au.com.ifti.models.Model;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
@@ -39,8 +37,6 @@ public abstract class Controller {
   public void setResponse(TiramisuResponse response) {
     this.response = response;
   }
-  
-  public abstract void run(Matcher matcher);
   
   public void close() {
     this.model.close();
