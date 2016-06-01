@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import au.com.ifti.controllers.*;
+import au.com.ifti.controllers.ReportController;
 import au.com.ifti.exceptions.BadRequestException;
 import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.utilities.TiramisuRequest;
@@ -19,49 +19,58 @@ import au.com.ifti.utilities.TiramisuResponse;
 
 public class UrlDispatcher {
   
+  private TiramisuRequest request;
+  
+  private TiramisuResponse response;
   /**
    * This map is a regex expression pattern to the class to load next.
    */
   private List<Route> routes = new ArrayList<>();
   
+  private HttpServletRequest servletRequest;
+  private HttpServletResponse servletResponse;
+  
   /**
    * Dispatching constructor, currently building the route list by hand in this function.
+   * Need to ensure the velocity engine is initialised.
    */
-  public UrlDispatcher() {
+  public UrlDispatcher(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+    // Assigning the servlet objects to the dispatcher.
+    this.servletRequest = servletRequest;
+    this.servletResponse = servletResponse;
+    
     routes.add(new Route(Pattern.compile("^/Tiramisu/reports[/]?"), ReportController.class, "index"));
     routes.add(new Route(Pattern.compile("^/Tiramisu/reports/(?<id>[0-9]{1,})[/]?"), ReportController.class, "view"));
     routes.add(new Route(Pattern.compile("^/Tiramisu/reports/add[/]?"), ReportController.class, "add"));
     routes.add(new Route(Pattern.compile("^/Tiramisu/reports/edit/(?<id>[0-9]{1,})[/]?"), ReportController.class, "edit"));
     routes.add(new Route(Pattern.compile("^/Tiramisu/reports/delete/(?<id>[0-9]{1,})[/]?"), ReportController.class, "delete"));
   }
-  
+
   /**
    * The dispatch function called by the servlet to start the routing process.
    * @param request
    * @param response
    * @throws IOException 
    */
-  public void dispatch(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+  public void dispatch() {
     
     Boolean matched = false;
-    TiramisuRequest request = null;
-    TiramisuResponse response = null;
     
     try {
-      request = new TiramisuRequest(servletRequest);
-      response = new TiramisuResponse(servletResponse);
+      this.request = new TiramisuRequest(servletRequest);
+      this.response = new TiramisuResponse(servletResponse);
     }
     catch (IOException e1) {
       e1.printStackTrace();
     }
     
     for (Route route : routes) {
-      Matcher m = route.getPattern().matcher(request.getRequestUri());
+      Matcher m = route.getPattern().matcher(this.request.getRequestUri());
       if (m.matches()) {
         matched = true;
         System.out.println(String.format("Matched on: %s", m.group(0)));
         try {
-          Object controller = route.getController().getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class).newInstance(request, response);
+          Object controller = route.getController().getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class).newInstance(this.request, this.response);
           
           // Get the method defined by the URL router.
           Method method = controller.getClass().getMethod(route.getMethod(), Matcher.class);
@@ -77,10 +86,10 @@ public class UrlDispatcher {
         catch (InvocationTargetException e) {
           Throwable cause = e.getCause();
           if (cause instanceof BadRequestException) {
-            response.setStatusCode(400);
+            this.response.setStatusCode(400);
           }
           if (cause instanceof NotFoundException) {
-            response.setStatusCode(404);
+            this.response.setStatusCode(404);
           }
         }
         break;
@@ -97,16 +106,26 @@ public class UrlDispatcher {
       }
     }
     
-    
-    // Transfer the custom response string writer into the real response.
-    try {
-      servletResponse.setStatus(response.getStatusCode());
-      servletResponse.getWriter().print(response.getWriter());
-    }
-    catch (IOException e1) {
-      e1.printStackTrace();
-    }
-    
+  }
+
+  public TiramisuRequest getRequest() {
+    return request;
+  }
+
+  public TiramisuResponse getResponse() {
+    return response;
+  }
+
+  public void render() {
+    servletResponse.setStatus(response.getStatusCode());
+  }
+  
+  public void setRequest(TiramisuRequest request) {
+    this.request = request;
+  }
+  
+  public void setResponse(TiramisuResponse response) {
+    this.response = response;
   }
 
 }

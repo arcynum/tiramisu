@@ -17,6 +17,7 @@ public class ReportController extends Controller {
   }
   
   public void index(Matcher matcher) {
+    
     List<?> reports = this.model.findAll();
     for (Object object : reports) {
       if (object instanceof Report) {
@@ -24,6 +25,9 @@ public class ReportController extends Controller {
         this.response.getWriter().append(String.format("%d: %s", report.getId(), report.getName()));
       }
     }
+    
+    this.response.setTemplate("/reports/index.html");
+    this.response.setPageTitle("Reports Index");
   }
   
   public void view(Matcher matcher) throws NotFoundException {

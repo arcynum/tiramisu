@@ -9,6 +9,8 @@ public class TiramisuResponse {
   
   private StringWriter writer = new StringWriter();
   private Integer statusCode = 200;
+  private String template = "";
+  private String pageTitle = "";
   
   public TiramisuResponse(HttpServletResponse response) throws IOException {
     
@@ -28,6 +30,22 @@ public class TiramisuResponse {
 
   public void setStatusCode(Integer statusCode) {
     this.statusCode = statusCode;
+  }
+
+  public String getTemplate() {
+    return template;
+  }
+
+  public void setTemplate(String template) {
+    this.template = template;
+  }
+
+  public String getPageTitle() {
+    return pageTitle;
+  }
+
+  public void setPageTitle(String pageTitle) {
+    this.pageTitle = pageTitle;
   }
 
 }
