@@ -1,5 +1,6 @@
 package au.com.ifti.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -18,21 +19,23 @@ public class ReportController extends Controller {
   
   public void index(Matcher matcher) {
     
-    List<?> reports = this.model.findAll();
-    for (Object object : reports) {
+    List<Report> reports = new ArrayList<>();
+    List<?> objects = this.model.findAll();
+    
+    for (Object object : objects) {
       if (object instanceof Report) {
         Report report = (Report) object;
-        this.response.getWriter().append(String.format("%d: %s", report.getId(), report.getName()));
+        reports.add(report);
       }
     }
     
-    this.response.setTemplate("/reports/index.html");
+    this.response.getData().put("reports", reports);
+    this.response.setTemplate("/reports/index.vm");
     this.response.setPageTitle("Reports Index");
   }
   
   public void view(Matcher matcher) throws NotFoundException {
     Integer id = Integer.parseInt(matcher.group("id"));
-    this.response.getWriter().append(String.format("<h1>Hit the view method in the report controller for %d.</h1>", id));
     
     Object object = this.model.findById(id);
     if (object == null) {

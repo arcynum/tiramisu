@@ -68,9 +68,14 @@ public class RouterServlet extends HttpServlet {
     VelocityContext context = new VelocityContext();
     
     // Fetch the template and combine.
-    Template velocityTemplate = velocityEngine.getTemplate("layout.html");
+    Template velocityTemplate = velocityEngine.getTemplate("layout.vm");
     try {
-      context.put("body", dispatcher.getResponse().getTemplate());
+      // Loop through the assigned keys in the response and render them to the template.
+      // Using a named array here means you can access by name from the template.
+      for (String key : dispatcher.getResponse().getData().keySet()) {
+        context.put(key, dispatcher.getResponse().getData().get(key));
+      }
+      context.put("content", dispatcher.getResponse().getTemplate());
       context.put("pageTitle", dispatcher.getResponse().getPageTitle());
       velocityTemplate.merge(context, response.getWriter());
     }

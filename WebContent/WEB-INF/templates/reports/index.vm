@@ -1,0 +1,22 @@
+<table>
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Description</th>
+			<th>Created</th>
+			<th>Modified</th>
+		</tr>
+	</thead>
+	<tbody>
+		#foreach($report in $reports)
+		<tr>
+			<td>$!report.getId()</td>
+			<td>$!report.getName()</td>
+			<td>$!report.getDescription()</td>
+			<td>$!report.getCreated()</td>
+			<td>$!report.getModified()</td>
+		</tr>
+		#end
+	</tbody>
+</table>

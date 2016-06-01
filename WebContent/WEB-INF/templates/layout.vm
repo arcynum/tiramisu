@@ -6,6 +6,7 @@
         <title>$!pageTitle</title>
         <meta name="description" content="Tiramisu Application">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="format-detection" content="telephone=no">
 	</head>
-	<body>#parse($!body)</body>
+	<body>#parse($!content)</body>
 </html>
