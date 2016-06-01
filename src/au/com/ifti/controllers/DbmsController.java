@@ -28,10 +28,5 @@ public class DbmsController extends Controller {
       }
     }
   }
-  
-  @Override
-  public void close() {
-    this.model.close();
-  }
 
 }

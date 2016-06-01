@@ -16,9 +16,4 @@ public class DebugController extends Controller {
     response.getWriter().append("<h1>Hit the run method in the debug controller</h1>");
   }
   
-  @Override
-  public void close() {
-    this.model.close();
-  }
-
 }

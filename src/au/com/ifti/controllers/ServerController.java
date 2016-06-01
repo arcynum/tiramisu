@@ -31,10 +31,6 @@ public class ServerController extends Controller {
     }
     
   }
-  
-  @Override
-  public void close() {
-    this.model.close();
-  }
+
 
 }

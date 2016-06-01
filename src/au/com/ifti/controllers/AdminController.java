@@ -16,9 +16,4 @@ public class AdminController extends Controller {
     this.response.getWriter().append("<h1>Hit the run method in the admin controller</h1>");
   }
   
-  @Override
-  public void close() {
-    this.model.close();
-  }
-
 }

@@ -22,6 +22,13 @@ public abstract class Model {
     return result;
   }
   
+  public Object findById(Integer id) {
+    this.session.beginTransaction();
+    Object result = this.session.createQuery(String.format("from %s where id = %d", this.name, id)).uniqueResult();
+    this.session.getTransaction().commit();
+    return result;
+  }
+  
   public void close() {
     this.session.close();
   }

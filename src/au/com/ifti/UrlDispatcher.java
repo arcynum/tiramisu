@@ -13,7 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import au.com.ifti.controllers.AdminController;
 import au.com.ifti.controllers.DbmsController;
+import au.com.ifti.controllers.ReportController;
 import au.com.ifti.controllers.ServerController;
+import au.com.ifti.controllers.TagController;
+import au.com.ifti.exceptions.BadRequestException;
+import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
@@ -31,6 +35,10 @@ public class UrlDispatcher {
     routes.add(new Route(Pattern.compile("^/Tiramisu/admin[/]?"), AdminController.class, "run"));
     routes.add(new Route(Pattern.compile("^/Tiramisu/(?<dbms>[0-9]{1,})[/]?"), DbmsController.class, "run"));
     routes.add(new Route(Pattern.compile("^/Tiramisu/(?<dbms>[0-9]{1,})/(?<server>[0-9]{1,})[/]?"), ServerController.class, "run"));
+    
+    routes.add(new Route(Pattern.compile("^/Tiramisu/Reports[/]?"), ReportController.class, "run"));
+    routes.add(new Route(Pattern.compile("^/Tiramisu/Reports/(?<id>[0-9]{1,})[/]?"), ReportController.class, "view"));
+    routes.add(new Route(Pattern.compile("^/Tiramisu/Tags[/]?"), TagController.class, "run"));
   }
   
   /**
@@ -69,8 +77,17 @@ public class UrlDispatcher {
           Method close = controller.getClass().getMethod("close");
           close.invoke(controller);
         }
-        catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException  e) {
+        catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException e) {
           e.printStackTrace();
+        }
+        catch (InvocationTargetException e) {
+          Throwable cause = e.getCause();
+          if (cause instanceof BadRequestException) {
+            response.setStatusCode(400);
+          }
+          if (cause instanceof NotFoundException) {
+            response.setStatusCode(404);
+          }
         }
         break;
       }
@@ -89,6 +106,7 @@ public class UrlDispatcher {
     
     // Transfer the custom response string writer into the real response.
     try {
+      servletResponse.setStatus(response.getStatusCode());
       servletResponse.getWriter().print(response.getWriter());
     }
     catch (IOException e1) {
