@@ -1,5 +1,5 @@
 # Tiramisu Web Application Framework
-## A web application framework inspired from some complex projects built on CakePHP 2.
+#### A web application framework inspired from some complex projects built on CakePHP 2.
 
 ---
 
