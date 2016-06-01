@@ -33,8 +33,7 @@ public class RouterServlet extends HttpServlet {
    * Clean up the database connection from Hibernate.
    */
   @Override
-  public void destroy()
-  {
+  public void destroy() {
       HibernateUtil.tearDownORM();
   }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="au.com.ifti.models.pojo">
-	<class name="Dbms" table="datalibrarydbms">
+	<class name="Server" table="datalibraryserver">
 		<id name="id" column="id">
 			<generator class="identity" />
 		</id>
@@ -10,5 +10,6 @@
 		<property name="created" />
 		<property name="modified" />
 		<property name="img" />
+		<many-to-one name="dbms" column="dbms_id" />
 	</class>
 </hibernate-mapping>

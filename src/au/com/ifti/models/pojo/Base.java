@@ -1,15 +1,15 @@
-package au.com.ifti.models.hibernate;
+package au.com.ifti.models.pojo;
 
 import java.util.Date;
 
-public class Dbms {
+public class Base {
+  
   private Integer id;
   private String name;
   private String description;
   private Date created;
   private Date modified;
-  private String img;
-
+  
   public Integer getId() {
     return id;
   }
@@ -50,11 +50,4 @@ public class Dbms {
     this.modified = modified;
   }
 
-  public String getImg() {
-    return img;
-  }
-
-  public void setImg(String img) {
-    this.img = img;
-  }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import au.com.ifti.models.DbmsModel;
-import au.com.ifti.models.hibernate.Dbms;
+import au.com.ifti.models.pojo.Dbms;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
@@ -27,6 +27,11 @@ public class DbmsController extends Controller {
         this.response.getWriter().append(dbms.getName());
       }
     }
+  }
+  
+  @Override
+  public void close() {
+    this.model.close();
   }
 
 }

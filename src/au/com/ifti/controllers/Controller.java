@@ -41,5 +41,6 @@ public abstract class Controller {
   }
   
   public abstract void run(Matcher matcher);
+  public abstract void close();
   
 }

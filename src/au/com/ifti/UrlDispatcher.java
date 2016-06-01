@@ -29,8 +29,8 @@ public class UrlDispatcher {
    */
   public UrlDispatcher() {
     routes.add(new Route(Pattern.compile("^/Tiramisu/admin[/]?"), AdminController.class, "run"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/(?<dbms>[A-Za-z]{0,})[/]?"), DbmsController.class, "run"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/(?<dbms>[A-Za-z]{0,})/(?<server>[A-Za-z]{0,})[/]?"), ServerController.class, "run"));
+    routes.add(new Route(Pattern.compile("^/Tiramisu/(?<dbms>[0-9]{1,})[/]?"), DbmsController.class, "run"));
+    routes.add(new Route(Pattern.compile("^/Tiramisu/(?<dbms>[0-9]{1,})/(?<server>[0-9]{1,})[/]?"), ServerController.class, "run"));
   }
   
   /**
@@ -60,8 +60,14 @@ public class UrlDispatcher {
         System.out.println(String.format("Matched on: %s", m.group(0)));
         try {
           Object controller = route.getController().getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class).newInstance(request, response);
+          
+          // Get the method defined by the URL router.
           Method method = controller.getClass().getMethod(route.getMethod(), Matcher.class);
           method.invoke(controller, m);
+          
+          // Call the close method for the controller.
+          Method close = controller.getClass().getMethod("close");
+          close.invoke(controller);
         }
         catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException  e) {
           e.printStackTrace();

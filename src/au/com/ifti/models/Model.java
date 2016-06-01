@@ -8,15 +8,22 @@ import au.com.ifti.utilities.HibernateUtil;
 
 public abstract class Model {
   protected String name;
+  protected Session session;
+  
+  public Model() {
+    this.session = HibernateUtil.getORMSessionFactory().openSession();
+  }
   
   public List<?> find(String keyword) {
-    Session session = HibernateUtil.getORMSessionFactory().openSession();
-    session.beginTransaction();
-    List<?> result = session.createQuery(String.format("from %s", this.name)).list();
-    session.getTransaction().commit();
-    session.close();
+    this.session.beginTransaction();
+    List<?> result = this.session.createQuery(String.format("from %s", this.name)).list();
+    this.session.getTransaction().commit();
     
     return result;
+  }
+  
+  public void close() {
+    this.session.close();
   }
   
 }
