@@ -20,8 +20,8 @@ import au.com.ifti.utilities.TiramisuResponse;
 public class UrlDispatcher {
   
   private TiramisuRequest request;
-  
   private TiramisuResponse response;
+  
   /**
    * This map is a regex expression pattern to the class to load next.
    */
@@ -87,23 +87,24 @@ public class UrlDispatcher {
           Throwable cause = e.getCause();
           if (cause instanceof BadRequestException) {
             this.response.setStatusCode(400);
+            this.response.setTemplate("400.vm");
+            this.response.setPageTitle("400");
           }
           if (cause instanceof NotFoundException) {
             this.response.setStatusCode(404);
+            this.response.setTemplate("404.vm");
+            this.response.setPageTitle("404");
           }
         }
         break;
       }
     }
     
-    // Nothing matched, so write out a message saying that.
+    // Nothing matched, 404.
     if (!matched) {
-      response.getWriter().append("<h1>You did not match any routes, available routes are</h1>");
-      for (Route route : routes) {
-        response.getWriter().append("<ul>");
-        response.getWriter().append("<li>" + route.getPattern().toString() + "</li>");
-        response.getWriter().append("</ul>");
-      }
+      this.response.setStatusCode(404);
+      this.response.setTemplate("404.vm");
+      this.response.setPageTitle("404");
     }
     
   }

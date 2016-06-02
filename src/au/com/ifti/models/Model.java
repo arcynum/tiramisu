@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 
+import au.com.ifti.models.pojo.Base;
 import au.com.ifti.utilities.HibernateUtil;
 
 public abstract class Model {
@@ -22,11 +23,26 @@ public abstract class Model {
     return result;
   }
   
+  /*
   public Object findById(Integer id) {
     this.session.beginTransaction();
     Object result = this.session.createQuery(String.format("from %s where id = %d", this.name, id)).uniqueResult();
     this.session.getTransaction().commit();
     return result;
+  }
+  */
+  
+  public <T extends Base> T findById(Class<T> classIdentifier, Integer id) {
+    this.session.beginTransaction();
+    Object result = this.session.get(classIdentifier, id);
+    this.session.getTransaction().commit();
+    
+    try {
+      return classIdentifier.cast(result);
+    }
+    catch (ClassCastException e) {
+      return null;
+    }
   }
   
   public void close() {

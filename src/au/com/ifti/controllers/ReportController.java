@@ -29,22 +29,20 @@ public class ReportController extends Controller {
       }
     }
     
-    this.response.getData().put("reports", reports);
+    this.response.addViewVariable("reports", reports);
     this.response.setTemplate("/reports/index.vm");
     this.response.setPageTitle("Reports Index");
   }
   
   public void view(Matcher matcher) throws NotFoundException {
     Integer id = Integer.parseInt(matcher.group("id"));
+    Report report = this.model.findById(Report.class, id);
     
-    Object object = this.model.findById(id);
-    if (object == null) {
-      throw new NotFoundException("Object not found in database");
+    if (report == null) {
+      throw new NotFoundException();
     }
-    if (object instanceof Report) {
-      Report report = (Report) object;
-      this.response.getWriter().append(report.getName());
-    }
+    
+    this.response.addViewVariable("report", report);
   }
 
 }

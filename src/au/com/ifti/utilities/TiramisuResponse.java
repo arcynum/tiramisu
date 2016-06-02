@@ -6,10 +6,17 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This is the application specific version of the HTTP response object.
+ * 
+ * 
+ * @author Chris Hamilton
+ * @see HttpServletResponse
+ */
 public class TiramisuResponse {
   
   private StringWriter writer = new StringWriter();
-  private Integer statusCode = 200;
+  private Integer statusCode = 9999;
   private String template = "";
   private String pageTitle = "";
   private HashMap<String, Object> data = new HashMap<>();
@@ -56,6 +63,10 @@ public class TiramisuResponse {
 
   public void setData(HashMap<String, Object> data) {
     this.data = data;
+  }
+  
+  public void addViewVariable(String key, Object value) {
+    this.data.put(key, value);
   }
 
 }

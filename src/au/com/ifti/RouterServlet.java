@@ -55,6 +55,9 @@ public class RouterServlet extends HttpServlet {
    * @see HttpServlet#service()
    */
   protected void service(HttpServletRequest request, HttpServletResponse response) {
+    // Apply the generic headers
+    addGenericHeaders(response);
+    
     // Create the application URL Router and pass it the servlet request and response.
     UrlDispatcher dispatcher = new UrlDispatcher(request, response);
     
@@ -84,12 +87,17 @@ public class RouterServlet extends HttpServlet {
     }
   }
   
+  private void addGenericHeaders(HttpServletResponse response) {
+    response.setCharacterEncoding("utf-8");
+    response.setContentType("text/html;charset=UTF-8");
+  }
+  
   /**
    * Clean up the database connection from Hibernate.
    */
   @Override
   public void destroy() {
-      HibernateUtil.tearDownORM();
+    HibernateUtil.tearDownORM();
   }
 
 }
