@@ -43,6 +43,8 @@ public class ReportController extends Controller {
     }
     
     this.response.addViewVariable("report", report);
+    this.response.setTemplate("/reports/view.vm");
+    this.response.setPageTitle(report.getName());
   }
 
 }

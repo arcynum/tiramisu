@@ -1,0 +1,20 @@
+<table>
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Description</th>
+			<th>Created</th>
+			<th>Modified</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>$!report.getId()</td>
+			<td>$!report.getName()</td>
+			<td>$!report.getDescription()</td>
+			<td>$!report.getCreated()</td>
+			<td>$!report.getModified()</td>
+		</tr>
+	</tbody>
+</table>

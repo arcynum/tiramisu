@@ -1,6 +1,5 @@
 package au.com.ifti;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -50,19 +49,13 @@ public class UrlDispatcher {
    * The dispatch function called by the servlet to start the routing process.
    * @param request
    * @param response
-   * @throws IOException 
    */
   public void dispatch() {
     
     Boolean matched = false;
     
-    try {
-      this.request = new TiramisuRequest(servletRequest);
-      this.response = new TiramisuResponse(servletResponse);
-    }
-    catch (IOException e1) {
-      e1.printStackTrace();
-    }
+    this.request = new TiramisuRequest(servletRequest);
+    this.response = new TiramisuResponse(servletResponse);
     
     for (Route route : routes) {
       Matcher m = route.getPattern().matcher(this.request.getRequestUri());

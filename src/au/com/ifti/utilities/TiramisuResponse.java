@@ -1,6 +1,5 @@
 package au.com.ifti.utilities;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 
@@ -16,12 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 public class TiramisuResponse {
   
   private StringWriter writer = new StringWriter();
-  private Integer statusCode = 9999;
+  private Integer statusCode = 200;
   private String template = "";
   private String pageTitle = "";
   private HashMap<String, Object> data = new HashMap<>();
   
-  public TiramisuResponse(HttpServletResponse response) throws IOException {
+  public TiramisuResponse(HttpServletResponse response) {
     
   }
 
