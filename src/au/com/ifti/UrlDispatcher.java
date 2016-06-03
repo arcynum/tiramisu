@@ -38,11 +38,11 @@ public class UrlDispatcher {
     this.servletRequest = servletRequest;
     this.servletResponse = servletResponse;
     
-    routes.add(new Route(Pattern.compile("^/Tiramisu/reports[/]?"), ReportController.class, "index"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/reports/(?<id>[0-9]{1,})[/]?"), ReportController.class, "view"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/reports/add[/]?"), ReportController.class, "add"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/reports/edit/(?<id>[0-9]{1,})[/]?"), ReportController.class, "edit"));
-    routes.add(new Route(Pattern.compile("^/Tiramisu/reports/delete/(?<id>[0-9]{1,})[/]?"), ReportController.class, "delete"));
+    routes.add(new Route(Pattern.compile("^/(.*?)/reports[/]?"), ReportController.class, "index"));
+    routes.add(new Route(Pattern.compile("^/(.*?)/reports/(?<id>[0-9]{1,})[/]?"), ReportController.class, "view"));
+    routes.add(new Route(Pattern.compile("^/(.*?)/reports/add[/]?"), ReportController.class, "add"));
+    routes.add(new Route(Pattern.compile("^/(.*?)/reports/edit/(?<id>[0-9]{1,})[/]?"), ReportController.class, "edit"));
+    routes.add(new Route(Pattern.compile("^/(.*?)/reports/delete/(?<id>[0-9]{1,})[/]?"), ReportController.class, "delete"));
   }
 
   /**
@@ -56,6 +56,8 @@ public class UrlDispatcher {
     
     this.request = new TiramisuRequest(servletRequest);
     this.response = new TiramisuResponse(servletResponse);
+    
+    System.out.println(this.request.getRequestUri());
     
     for (Route route : routes) {
       Matcher m = route.getPattern().matcher(this.request.getRequestUri());
