@@ -35,6 +35,9 @@ public class ReportController extends Controller {
   }
   
   public void view(Matcher matcher) throws NotFoundException {
+    
+    System.out.println("Hitting the view controller.");
+    
     Integer id = Integer.parseInt(matcher.group("id"));
     Report report = this.model.findById(Report.class, id);
     

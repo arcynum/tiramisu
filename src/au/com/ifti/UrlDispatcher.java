@@ -38,11 +38,11 @@ public class UrlDispatcher {
     this.servletRequest = servletRequest;
     this.servletResponse = servletResponse;
     
-    routes.add(new Route(Pattern.compile("^/(.*?)/reports[/]?"), ReportController.class, "index"));
-    routes.add(new Route(Pattern.compile("^/(.*?)/reports/(?<id>[0-9]{1,})[/]?"), ReportController.class, "view"));
-    routes.add(new Route(Pattern.compile("^/(.*?)/reports/add[/]?"), ReportController.class, "add"));
-    routes.add(new Route(Pattern.compile("^/(.*?)/reports/edit/(?<id>[0-9]{1,})[/]?"), ReportController.class, "edit"));
-    routes.add(new Route(Pattern.compile("^/(.*?)/reports/delete/(?<id>[0-9]{1,})[/]?"), ReportController.class, "delete"));
+    routes.add(new Route(Pattern.compile("^/.*?/reports[/]?"), ReportController.class, "index"));
+    routes.add(new Route(Pattern.compile("^/.*?/reports/(?<id>[0-9]{1,})[/]?"), ReportController.class, "view"));
+    routes.add(new Route(Pattern.compile("^/.*?/reports/add[/]?"), ReportController.class, "add"));
+    routes.add(new Route(Pattern.compile("^/.*?/reports/edit/(?<id>[0-9]{1,})[/]?"), ReportController.class, "edit"));
+    routes.add(new Route(Pattern.compile("^/.*?/reports/delete/(?<id>[0-9]{1,})[/]?"), ReportController.class, "delete"));
   }
 
   /**
@@ -81,11 +81,13 @@ public class UrlDispatcher {
         catch (InvocationTargetException e) {
           Throwable cause = e.getCause();
           if (cause instanceof BadRequestException) {
+        	System.out.println("Bad request exception");
             this.response.setStatusCode(400);
             this.response.setTemplate("400.vm");
             this.response.setPageTitle("400");
           }
           if (cause instanceof NotFoundException) {
+        	System.out.println("Not found exception");
             this.response.setStatusCode(404);
             this.response.setTemplate("404.vm");
             this.response.setPageTitle("404");

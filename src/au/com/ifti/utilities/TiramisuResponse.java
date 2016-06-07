@@ -16,7 +16,7 @@ public class TiramisuResponse {
   
   private StringWriter writer = new StringWriter();
   private Integer statusCode = 200;
-  private String template = "";
+  private String template = "200.vm";
   private String pageTitle = "";
   private HashMap<String, Object> data = new HashMap<>();
   
