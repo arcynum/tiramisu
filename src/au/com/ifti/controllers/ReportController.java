@@ -19,6 +19,8 @@ public class ReportController extends Controller {
   
   public void index(Matcher matcher) {
     
+    System.out.println("Hitting the index controller.");
+    
     List<Report> reports = new ArrayList<>();
     List<?> objects = this.model.findAll();
     
