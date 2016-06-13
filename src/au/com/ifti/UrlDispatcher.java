@@ -68,7 +68,7 @@ public class UrlDispatcher {
           Object controller = route.getController().getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class).newInstance(this.request, this.response);
           
           // Get the method defined by the URL router.
-          Method method = controller.getClass().getMethod(route.getMethod(), Matcher.class);
+          Method method = controller.getClass().getDeclaredMethod(route.getMethod(), Matcher.class);
           method.invoke(controller, m);
           
           // Call the close method for the controller.
