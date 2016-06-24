@@ -14,6 +14,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.hibernate.Session;
 
 import au.com.ifti.utilities.HibernateUtil;
 
@@ -35,7 +36,6 @@ public class RouterServlet extends HttpServlet {
   
   @Override
   public void init() {
-    
     // Create the velocity properties.
     Properties props = new Properties();
     props.setProperty("resource.loader", "webapp");
@@ -49,6 +49,8 @@ public class RouterServlet extends HttpServlet {
     // Initialise the engine.
     velocityEngine.init();
     
+    // Attempt to initialise hibernate.
+    HibernateUtil.getORMSessionFactory().openSession().close(); 
   }
 
   /**
@@ -58,14 +60,17 @@ public class RouterServlet extends HttpServlet {
     // Apply the generic headers
     addGenericHeaders(response);
     
+    // Open a database session and pass it to the dispatcher.
+    Session session = HibernateUtil.getORMSessionFactory().openSession();
+    
     // Create the application URL Router and pass it the servlet request and response.
-    UrlDispatcher dispatcher = new UrlDispatcher(request, response);
+    UrlDispatcher dispatcher = new UrlDispatcher(request, response, session);
     
     // Dispatch the request to the application.
     dispatcher.dispatch();
     
-    // Render the response to the user.
-    dispatcher.render();
+    // Set the response status code.
+    response.setStatus(dispatcher.getResponse().getStatusCode());
     
     // Create the velocity context.
     VelocityContext context = new VelocityContext();
@@ -85,6 +90,9 @@ public class RouterServlet extends HttpServlet {
     catch (ResourceNotFoundException | ParseErrorException | MethodInvocationException | IOException e) {
       e.printStackTrace();
     }
+    
+    // Close the hibernate session.
+    session.close();
   }
   
   private void addGenericHeaders(HttpServletResponse response) {

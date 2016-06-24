@@ -5,14 +5,13 @@ import java.util.List;
 import org.hibernate.Session;
 
 import au.com.ifti.models.pojo.Base;
-import au.com.ifti.utilities.HibernateUtil;
 
 public abstract class Model {
   protected String name;
   protected Session session;
   
-  public Model() {
-    this.session = HibernateUtil.getORMSessionFactory().openSession();
+  public Model(Session session) {
+    this.session = session;
   }
   
   public List<?> findAll() {
@@ -22,15 +21,6 @@ public abstract class Model {
     
     return result;
   }
-  
-  /*
-  public Object findById(Integer id) {
-    this.session.beginTransaction();
-    Object result = this.session.createQuery(String.format("from %s where id = %d", this.name, id)).uniqueResult();
-    this.session.getTransaction().commit();
-    return result;
-  }
-  */
   
   public <T extends Base> T findById(Class<T> classIdentifier, Integer id) {
     this.session.beginTransaction();
@@ -43,10 +33,6 @@ public abstract class Model {
     catch (ClassCastException e) {
       return null;
     }
-  }
-  
-  public void close() {
-    this.session.close();
   }
   
 }

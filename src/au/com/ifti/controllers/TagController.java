@@ -8,7 +8,7 @@ public class TagController extends Controller {
   
   public TagController(TiramisuRequest request, TiramisuResponse response) {
     super(request, response);
-    this.model = new TagModel();
+    this.model = new TagModel(response.getSession());
   }
   
 }

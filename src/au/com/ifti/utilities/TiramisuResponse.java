@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Session;
+
 /**
  * This is the application specific version of the HTTP response object.
  * 
@@ -19,6 +21,7 @@ public class TiramisuResponse {
   private String template = "200.vm";
   private String pageTitle = "";
   private HashMap<String, Object> data = new HashMap<>();
+  private Session session = null;
   
   public TiramisuResponse(HttpServletResponse response) {
     
@@ -66,6 +69,14 @@ public class TiramisuResponse {
   
   public void addViewVariable(String key, Object value) {
     this.data.put(key, value);
+  }
+
+  public Session getSession() {
+    return session;
+  }
+
+  public void setSession(Session session) {
+    this.session = session;
   }
 
 }

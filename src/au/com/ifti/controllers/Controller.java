@@ -38,8 +38,4 @@ public abstract class Controller {
     this.response = response;
   }
   
-  public void close() {
-    this.model.close();
-  }
-  
 }

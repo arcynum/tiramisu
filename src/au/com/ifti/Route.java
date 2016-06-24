@@ -1,17 +1,20 @@
 package au.com.ifti;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Route {
   
   private Pattern pattern = null;
+  private List<String> httpMethods = null;
   private Class<?> controller = null;
   private String method = null;
   
-  public Route(Pattern pattern, Class<?> controller, String method) {
-    this.pattern = pattern;
-    this.controller = controller;
-    this.method = method;
+  public Route(Pattern pattern, List<String> httpMethods, Class<?> controller, String method) {
+    this.setPattern(pattern);
+    this.setHttpMethods(httpMethods);
+    this.setController(controller);
+    this.setMethod(method);
   }
 
   public Pattern getPattern() {
@@ -36,6 +39,14 @@ public class Route {
 
   public void setMethod(String method) {
     this.method = method;
+  }
+
+  public List<String> getHttpMethods() {
+    return httpMethods;
+  }
+
+  public void setHttpMethods(List<String> httpMethods) {
+    this.httpMethods = httpMethods;
   }
 
 }
