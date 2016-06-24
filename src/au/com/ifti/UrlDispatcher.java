@@ -15,7 +15,6 @@ import org.hibernate.Session;
 import au.com.ifti.controllers.ReportController;
 import au.com.ifti.exceptions.BadRequestException;
 import au.com.ifti.exceptions.NotFoundException;
-import au.com.ifti.utilities.TiramisuParameter;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
@@ -73,25 +72,30 @@ public class UrlDispatcher {
             // Create the controller (constructor).
             Object controller = route.getController().getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class).newInstance(this.request, this.response);
             
+            String[] arguments = new String[m.groupCount()];
+            for (int i = 1; i < m.groupCount(); i++) {
+              arguments[i] = m.group(i);
+            }
+            
             switch (m.groupCount()) {
               case 0: {
                 controller.getClass().getDeclaredMethod(route.getMethod()).invoke(controller);
                 break;
               }
               case 1: {
-                controller.getClass().getDeclaredMethod(route.getMethod(), TiramisuParameter.class).invoke(controller, new TiramisuParameter(m.group(1)));
+                controller.getClass().getDeclaredMethod(route.getMethod(), String.class).invoke(controller, m.group(1));
                 break;
               }
               case 2: {
-                controller.getClass().getDeclaredMethod(route.getMethod(), TiramisuParameter.class, TiramisuParameter.class).invoke(controller, new TiramisuParameter(m.group(1)), new TiramisuParameter(m.group(2)));
+                controller.getClass().getDeclaredMethod(route.getMethod(), String.class, String.class).invoke(controller, m.group(1), m.group(2));
                 break;
               }
               case 3: {
-                controller.getClass().getDeclaredMethod(route.getMethod(), TiramisuParameter.class, TiramisuParameter.class, TiramisuParameter.class).invoke(controller, new TiramisuParameter(m.group(1)), new TiramisuParameter(m.group(2)), new TiramisuParameter(m.group(3)));
+                controller.getClass().getDeclaredMethod(route.getMethod(), String.class, String.class, String.class).invoke(controller, m.group(1), m.group(2), m.group(3));
                 break;
               }
               case 4: {
-                controller.getClass().getDeclaredMethod(route.getMethod(), TiramisuParameter.class, TiramisuParameter.class, TiramisuParameter.class, TiramisuParameter.class).invoke(controller, new TiramisuParameter(m.group(1)), new TiramisuParameter(m.group(2)), new TiramisuParameter(m.group(3)), new TiramisuParameter(m.group(4)));
+                controller.getClass().getDeclaredMethod(route.getMethod(), String.class, String.class, String.class, String.class).invoke(controller, m.group(1), m.group(2), m.group(3), m.group(4));
                 break;
               }
             }
