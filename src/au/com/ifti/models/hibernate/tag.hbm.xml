@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="au.com.ifti.models.pojo">
-	<class name="Tag" table="dltag">
+<hibernate-mapping package="au.com.ifti.models">
+	<class name="TagModel" table="dltag">
 		<id name="id" column="id">
 			<generator class="identity" />
 		</id>
@@ -11,9 +11,9 @@
 		<property name="description" />
 		<property name="creator" />
 		
-		<set name="reports" table="tags_reports">
+		<set name="reports" table="dltags_dlreports">
 			<key column="tag_id" />
-			<many-to-many class="au.com.ifti.models.pojo.Report" column="report_id" />
+			<many-to-many class="au.com.ifti.models.ReportModel" column="report_id" />
 		</set>
 	</class>
 </hibernate-mapping>

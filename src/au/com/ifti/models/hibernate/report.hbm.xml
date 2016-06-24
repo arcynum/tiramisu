@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="au.com.ifti.models.pojo">
-	<class name="Report" table="dlreport">
+<hibernate-mapping package="au.com.ifti.models">
+	<class name="ReportModel" table="dlreport">
 		<id name="id" column="id">
 			<generator class="identity" />
 		</id>
@@ -23,9 +23,9 @@
 		<property name="schedule" length="300"/>
 		<property name="additionalInfo" length="1024"/>
 		
-		<set name="tags" table="tags_reports">
+		<set name="tags" table="dltags_dlreports">
 			<key column="report_id" />
-			<many-to-many class="au.com.ifti.models.pojo.Tag" column="tag_id" />
+			<many-to-many class="au.com.ifti.models.TagModel" column="tag_id" />
 		</set>
 		
 	</class>

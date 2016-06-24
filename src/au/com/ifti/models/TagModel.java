@@ -1,12 +1,30 @@
 package au.com.ifti.models;
 
-import org.hibernate.Session;
+import java.util.Set;
 
 public class TagModel extends Model {
   
-  public TagModel(Session session) {
-    super(session);
-    this.name = "Tag";
+  private String creator;
+  private Set<ReportModel> reports;
+  
+  public TagModel() {
+    super();
+  }
+
+  public String getCreator() {
+    return creator;
+  }
+
+  public void setCreator(String creator) {
+    this.creator = creator;
+  }
+
+  public Set<ReportModel> getReports() {
+    return reports;
+  }
+
+  public void setReports(Set<ReportModel> reports) {
+    this.reports = reports;
   }
 
 }
