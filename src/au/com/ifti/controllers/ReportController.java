@@ -2,6 +2,8 @@ package au.com.ifti.controllers;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.models.ReportModel;
 import au.com.ifti.utilities.TiramisuRequest;
@@ -9,8 +11,8 @@ import au.com.ifti.utilities.TiramisuResponse;
 
 public class ReportController extends Controller {
   
-  public ReportController(TiramisuRequest request, TiramisuResponse response) {
-    super(request, response);
+  public ReportController(TiramisuRequest request, TiramisuResponse response, Session session) {
+    super(request, response, session);
   }
   
   public void index() {    

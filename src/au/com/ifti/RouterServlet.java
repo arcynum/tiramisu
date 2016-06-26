@@ -38,6 +38,7 @@ public class RouterServlet extends HttpServlet {
   public void init() {
     // Create the velocity properties.
     Properties props = new Properties();
+    props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
     props.setProperty("resource.loader", "webapp");
     props.setProperty("webapp.resource.loader.class", "org.apache.velocity.tools.view.WebappResourceLoader");
     props.setProperty("webapp.resource.loader.path", "/WEB-INF/templates/");
@@ -50,7 +51,7 @@ public class RouterServlet extends HttpServlet {
     velocityEngine.init();
     
     // Attempt to initialise hibernate.
-    HibernateUtil.getORMSessionFactory().openSession().close(); 
+    HibernateUtil.getSessionFactory().openSession().close(); 
   }
 
   /**
@@ -61,7 +62,8 @@ public class RouterServlet extends HttpServlet {
     addGenericHeaders(response);
     
     // Open a database session and pass it to the dispatcher.
-    Session session = HibernateUtil.getORMSessionFactory().openSession();
+    // Manual handling the session for the request lifecycle is better.
+    Session session = HibernateUtil.getSessionFactory().openSession();
     
     // Create the application URL Router and pass it the servlet request and response.
     UrlDispatcher dispatcher = new UrlDispatcher(request, response, session);
@@ -105,7 +107,7 @@ public class RouterServlet extends HttpServlet {
    */
   @Override
   public void destroy() {
-    HibernateUtil.tearDownORM();
+    HibernateUtil.destroyRegistry();
   }
 
 }

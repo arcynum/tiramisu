@@ -1,0 +1,13 @@
+{
+	routes: [{
+		pattern: "^.*/reports[/]?",
+		methods: ["GET"],
+		class: "au.com.ifti.controllers.ReportController",
+		declaredMethod: "index"
+	}, {
+		pattern: "^.*/reports/([0-9]{1,})[/]?",
+		methods: ["GET"],
+		class: "au.com.ifti.controllers.ReportController",
+		declaredMethod: "bob"
+	}]
+}

@@ -2,6 +2,8 @@ package au.com.ifti.controllers;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 import au.com.ifti.models.Model;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
@@ -10,10 +12,20 @@ public abstract class Controller {
 
   protected TiramisuRequest request;
   protected TiramisuResponse response;
+  protected Session session;
   
-  public Controller(TiramisuRequest request, TiramisuResponse response) {
+  public Controller(TiramisuRequest request, TiramisuResponse response, Session session) {
     this.request = request;
     this.response = response;
+    this.session = session;
+  }
+
+  public Session getSession() {
+    return session;
+  }
+
+  public void setSession(Session session) {
+    this.session = session;
   }
 
   public TiramisuRequest getRequest() {
@@ -33,16 +45,16 @@ public abstract class Controller {
   }
   
   public List<?> findAll(Class<?> classIdentifier) {
-    this.response.getSession().beginTransaction();
-    List<?> result = this.response.getSession().createCriteria(classIdentifier).list();
-    this.response.getSession().getTransaction().commit();
+    this.getSession().beginTransaction();
+    List<?> result = this.getSession().createCriteria(classIdentifier).list();
+    this.getSession().getTransaction().commit();
     return result;
   }
 
   public <T extends Model> T findById(Class<T> classIdentifier, Integer id) {
-    this.response.getSession().beginTransaction();
-    Object result = this.response.getSession().get(classIdentifier, id);
-    this.response.getSession().getTransaction().commit();
+    this.getSession().beginTransaction();
+    Object result = this.getSession().get(classIdentifier, id);
+    this.getSession().getTransaction().commit();
 
     try {
       return classIdentifier.cast(result);

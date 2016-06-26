@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,9 +21,12 @@ import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
 public class UrlDispatcher {
+  
+  private static final Logger log = Logger.getLogger(UrlDispatcher.class.getName());
 
   private TiramisuRequest request;
   private TiramisuResponse response;
+  private Session session;
 
   /**
    * This map is a regex expression pattern to the class to load next.
@@ -32,13 +37,10 @@ public class UrlDispatcher {
    * Dispatching constructor, currently building the route list by hand in this function. Need to
    * ensure the velocity engine is initialised.
    */
-  public UrlDispatcher(HttpServletRequest servletRequest, HttpServletResponse servletResponse,
-      Session session) {
+  public UrlDispatcher(HttpServletRequest servletRequest, HttpServletResponse servletResponse, Session session) {
     this.request = new TiramisuRequest(servletRequest);
     this.response = new TiramisuResponse(servletResponse);
-
-    // Set the session in the response object.
-    this.response.setSession(session);
+    this.setSession(session);
 
     try {
       routes.add(new Route(Pattern.compile("^.*/reports[/]?"), Arrays.asList("GET"),
@@ -46,7 +48,8 @@ public class UrlDispatcher {
       routes.add(new Route(Pattern.compile("^.*/reports/([0-9]{1,})[/]?"), Arrays.asList("GET"),
           ReportController.class, ReportController.class.getDeclaredMethod("view", String.class)));
     } catch (NoSuchMethodException | SecurityException e) {
-      e.printStackTrace();
+      log.log(Level.SEVERE, "The route definitions defined for the web application failed.");
+      log.log(Level.SEVERE, e.toString(), e);
     }
 
   }
@@ -91,9 +94,8 @@ public class UrlDispatcher {
               | SecurityException | IllegalArgumentException e) {
             e.printStackTrace();
           } catch (InvocationTargetException e) {
-            System.out.println(e);
             Throwable cause = e.getCause();
-            System.out.println(cause);
+            log.log(Level.SEVERE, cause.toString(), cause);
             if (cause instanceof BadRequestException) {
               System.out.println("Bad request exception");
               this.response.setStatusCode(400);
@@ -135,6 +137,14 @@ public class UrlDispatcher {
 
   public void setResponse(TiramisuResponse response) {
     this.response = response;
+  }
+
+  public Session getSession() {
+    return session;
+  }
+
+  public void setSession(Session session) {
+    this.session = session;
   }
 
 }

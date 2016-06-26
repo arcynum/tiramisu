@@ -8,16 +8,16 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 public class HibernateUtil {
   
-  private static SessionFactory mORMSessionFactory = null;
-  private static StandardServiceRegistry ormServiceRegistry = null;
+  private static SessionFactory sessionFactory = null;
+  private static StandardServiceRegistry serviceRegistry = null;
   
-  private static synchronized SessionFactory buildORMSessionFactory() {
+  private static synchronized SessionFactory buildSessionFactory() {
       try {
-          if (HibernateUtil.ormServiceRegistry == null) {
-              HibernateUtil.ormServiceRegistry = new StandardServiceRegistryBuilder()
+          if (HibernateUtil.serviceRegistry == null) {
+              HibernateUtil.serviceRegistry = new StandardServiceRegistryBuilder()
                   .configure("au/com/ifti/models/hibernate/database.xml").build();
           }
-          Metadata metadata = new MetadataSources(HibernateUtil.ormServiceRegistry).getMetadataBuilder().build();
+          Metadata metadata = new MetadataSources(HibernateUtil.serviceRegistry).getMetadataBuilder().build();
           return metadata.getSessionFactoryBuilder().build();
       }
       catch (Throwable ex) {
@@ -30,20 +30,20 @@ public class HibernateUtil {
    * 
    * @return the ORM session factory
    */
-  public static synchronized SessionFactory getORMSessionFactory() {
-      if (HibernateUtil.mORMSessionFactory == null) {
-          HibernateUtil.mORMSessionFactory = buildORMSessionFactory();
+  public static synchronized SessionFactory getSessionFactory() {
+      if (HibernateUtil.sessionFactory == null) {
+          HibernateUtil.sessionFactory = buildSessionFactory();
       }
-      return HibernateUtil.mORMSessionFactory;
+      return HibernateUtil.sessionFactory;
   }
 
   
   /**
    * Close the ORM connection.
    */
-  public static void tearDownORM() {
-      if (HibernateUtil.ormServiceRegistry != null) {
-          StandardServiceRegistryBuilder.destroy(HibernateUtil.ormServiceRegistry);
+  public static void destroyRegistry() {
+      if (HibernateUtil.serviceRegistry != null) {
+          StandardServiceRegistryBuilder.destroy(HibernateUtil.serviceRegistry);
       }
   }
 
