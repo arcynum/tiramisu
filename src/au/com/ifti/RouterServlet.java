@@ -58,9 +58,7 @@ public class RouterServlet extends HttpServlet {
    * @see HttpServlet#service()
    */
   protected void service(HttpServletRequest request, HttpServletResponse response) {
-    // Apply the generic headers
-    addGenericHeaders(response);
-    
+
     // Open a database session and pass it to the dispatcher.
     // Manual handling the session for the request lifecycle is better.
     Session session = HibernateUtil.getSessionFactory().openSession();
@@ -70,6 +68,9 @@ public class RouterServlet extends HttpServlet {
     
     // Dispatch the request to the application.
     dispatcher.dispatch();
+    
+    // Apply the generic response headers for this application.
+    addGenericHeaders(response);
     
     // Set the response status code.
     response.setStatus(dispatcher.getResponse().getStatusCode());

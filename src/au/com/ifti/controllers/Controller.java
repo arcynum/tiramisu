@@ -15,9 +15,9 @@ public abstract class Controller {
   protected Session session;
   
   public Controller(TiramisuRequest request, TiramisuResponse response, Session session) {
-    this.request = request;
-    this.response = response;
-    this.session = session;
+    this.setRequest(request);
+    this.setResponse(response);
+    this.setSession(session);
   }
 
   public Session getSession() {

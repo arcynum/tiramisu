@@ -38,8 +38,8 @@ public class UrlDispatcher {
    * ensure the velocity engine is initialised.
    */
   public UrlDispatcher(HttpServletRequest servletRequest, HttpServletResponse servletResponse, Session session) {
-    this.request = new TiramisuRequest(servletRequest);
-    this.response = new TiramisuResponse(servletResponse);
+    this.setRequest(new TiramisuRequest(servletRequest));
+    this.setResponse(new TiramisuResponse(servletResponse));
     this.setSession(session);
 
     try {
@@ -65,22 +65,22 @@ public class UrlDispatcher {
 
     // Loop through the routes looking for a match.
     for (Route route : routes) {
-      Matcher m = route.getPattern().matcher(this.request.getRequestUri());
+      Matcher m = route.getPattern().matcher(this.getRequest().getRequestUri());
       // If the URL pattern matches.
       if (m.matches()) {
 
         // If the HTTP method matches.
-        if (route.getHttpMethods().contains(this.request.getMethod())) {
+        if (route.getHttpMethods().contains(this.getRequest().getMethod())) {
           matched = true;
 
           System.out.println(
-              String.format("Matched on: %s over %s", m.group(0), this.request.getMethod()));
+              String.format("Matched on: %s over %s", m.group(0), this.getRequest().getMethod()));
           try {
 
             // Create the controller (constructor).
             Object controller = route.getController()
                 .getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class)
-                .newInstance(this.request, this.response);
+                .newInstance(this.getRequest(), this.getResponse());
 
             // Get the arguments.
             Object[] arguments = new String[m.groupCount()];
@@ -97,16 +97,16 @@ public class UrlDispatcher {
             Throwable cause = e.getCause();
             log.log(Level.SEVERE, cause.toString(), cause);
             if (cause instanceof BadRequestException) {
-              System.out.println("Bad request exception");
-              this.response.setStatusCode(400);
-              this.response.setTemplate("400.vm");
-              this.response.setPageTitle("400");
+              log.severe("Bad request exception");
+              this.getResponse().setStatusCode(400);
+              this.getResponse().setTemplate("400.vm");
+              this.getResponse().setPageTitle("400");
             }
             if (cause instanceof NotFoundException) {
-              System.out.println("Not found exception");
-              this.response.setStatusCode(404);
-              this.response.setTemplate("404.vm");
-              this.response.setPageTitle("404");
+              log.severe("Not found exception");
+              this.getResponse().setStatusCode(404);
+              this.getResponse().setTemplate("404.vm");
+              this.getResponse().setPageTitle("404");
             }
           }
           break;
@@ -116,9 +116,9 @@ public class UrlDispatcher {
 
     // Nothing matched, 404.
     if (!matched) {
-      this.response.setStatusCode(404);
-      this.response.setTemplate("404.vm");
-      this.response.setPageTitle("404");
+      this.getResponse().setStatusCode(404);
+      this.getResponse().setTemplate("404.vm");
+      this.getResponse().setPageTitle("404");
     }
 
   }

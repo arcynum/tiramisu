@@ -17,9 +17,9 @@ public class ReportController extends Controller {
   
   public void index() {    
     List<?> reports = findAll(ReportModel.class);
-    this.response.addViewVariable("reports", reports);
-    this.response.setTemplate("/reports/index.vm");
-    this.response.setPageTitle("Reports Index");
+    this.getResponse().addViewVariable("reports", reports);
+    this.getResponse().setTemplate("/reports/index.vm");
+    this.getResponse().setPageTitle("Reports Index");
   }
   
   public void view(String id) throws NotFoundException {
@@ -27,9 +27,9 @@ public class ReportController extends Controller {
     if (report == null) {
       throw new NotFoundException();
     }
-    this.response.addViewVariable("report", report);
-    this.response.setTemplate("/reports/view.vm");
-    this.response.setPageTitle(report.getName());
+    this.getResponse().addViewVariable("report", report);
+    this.getResponse().setTemplate("/reports/view.vm");
+    this.getResponse().setPageTitle(report.getName());
   }
 
 }
