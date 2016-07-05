@@ -62,5 +62,17 @@ public abstract class Controller {
       return null;
     }
   }
+  
+  public <T extends Model> T create(Class<T> classIdentifier) {
+    this.getSession().beginTransaction();
+    Object result = this.getSession().get(classIdentifier, id);
+    this.getSession().getTransaction().commit();
+
+    try {
+      return classIdentifier.cast(result);
+    } catch (ClassCastException e) {
+      return null;
+    }
+  }
 
 }

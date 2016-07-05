@@ -1,0 +1,22 @@
+<table>
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Description</th>
+			<th>Created</th>
+			<th>Modified</th>
+		</tr>
+	</thead>
+	<tbody>
+		#foreach($post in $posts)
+		<tr>
+			<td>$!post.getId()</td>
+			<td>$!post.getTitle()</td>
+			<td>$!post.getBody()</td>
+			<td>$!post.getCreated()</td>
+			<td>$!post.getModified()</td>
+		</tr>
+		#end
+	</tbody>
+</table>

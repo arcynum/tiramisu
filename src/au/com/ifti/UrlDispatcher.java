@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
 
-import au.com.ifti.controllers.ReportController;
+import au.com.ifti.controllers.PostController;
 import au.com.ifti.exceptions.BadRequestException;
 import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.utilities.TiramisuRequest;
@@ -43,10 +43,18 @@ public class UrlDispatcher {
     this.setSession(session);
 
     try {
-      routes.add(new Route(Pattern.compile("^.*/reports[/]?"), Arrays.asList("GET"),
-          ReportController.class, ReportController.class.getDeclaredMethod("index")));
-      routes.add(new Route(Pattern.compile("^.*/reports/([0-9]{1,})[/]?"), Arrays.asList("GET"),
-          ReportController.class, ReportController.class.getDeclaredMethod("view", String.class)));
+      
+      // Post Routes
+      routes.add(new Route(Pattern.compile("^.*/posts[/]?"), Arrays.asList("GET"), PostController.class, PostController.class.getDeclaredMethod("index")));
+      routes.add(new Route(Pattern.compile("^.*/posts/create[/]?"), Arrays.asList("GET", "POST"), PostController.class, PostController.class.getDeclaredMethod("create")));
+      routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("GET"), PostController.class, PostController.class.getDeclaredMethod("read", String.class)));
+      routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("PUT"), PostController.class, PostController.class.getDeclaredMethod("update", String.class)));
+      routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("DELETE"), PostController.class, PostController.class.getDeclaredMethod("delete", String.class)));
+      
+      // Report Routes
+      // routes.add(new Route(Pattern.compile("^.*/reports[/]?"), Arrays.asList("GET"), ReportController.class, ReportController.class.getDeclaredMethod("index")));
+      // routes.add(new Route(Pattern.compile("^.*/reports/([0-9]{1,})[/]?"), Arrays.asList("GET"), ReportController.class, ReportController.class.getDeclaredMethod("view", String.class)));
+      
     } catch (NoSuchMethodException | SecurityException e) {
       log.log(Level.SEVERE, "The route definitions defined for the web application failed.");
       log.log(Level.SEVERE, e.toString(), e);
@@ -61,6 +69,9 @@ public class UrlDispatcher {
    * @param response
    */
   public void dispatch() {
+    
+    System.out.println(String.format("Method: %s", this.getRequest().getMethod()));
+    
     Boolean matched = false;
 
     // Loop through the routes looking for a match.
@@ -73,14 +84,13 @@ public class UrlDispatcher {
         if (route.getHttpMethods().contains(this.getRequest().getMethod())) {
           matched = true;
 
-          System.out.println(
-              String.format("Matched on: %s over %s", m.group(0), this.getRequest().getMethod()));
+          System.out.println(String.format("Matched on: %s over %s", m.group(0), this.getRequest().getMethod()));
           try {
 
             // Create the controller (constructor).
             Object controller = route.getController()
-                .getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class)
-                .newInstance(this.getRequest(), this.getResponse());
+                .getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class, Session.class)
+                .newInstance(this.getRequest(), this.getResponse(), this.getSession());
 
             // Get the arguments.
             Object[] arguments = new String[m.groupCount()];

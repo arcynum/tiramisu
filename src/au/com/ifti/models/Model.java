@@ -5,8 +5,6 @@ import java.util.Date;
 public abstract class Model {
   
   protected Integer id;
-  protected String name;
-  protected String description;
   protected Date created;
   protected Date modified;
   
@@ -19,22 +17,6 @@ public abstract class Model {
 
   public void setId(Integer id) {
     this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
   }
 
   public Date getCreated() {
