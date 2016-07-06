@@ -48,13 +48,31 @@ public class PostController extends Controller {
     if (post == null) {
       throw new NotFoundException();
     }
-    this.getResponse().addViewVariable("post", post);
+    this.set("post", post);
     this.getResponse().setTemplate("/posts/read.vm");
     this.getResponse().setPageTitle(post.getTitle());
     return this.getResponse();
   }
   
   public TiramisuResponse update(String id) throws NotFoundException {
+    System.out.println("Post Update");
+    
+    PostModel post = findById(PostModel.class, Integer.parseInt(id));
+    if (post == null) {
+      throw new NotFoundException();
+    }
+    
+    if (this.request.getMethod() == "POST") {
+      post.setTitle(this.getRequest().getParameter("post_title"));
+      post.setBody(this.getRequest().getParameter("post_body"));
+      this.update(post);
+      return this.redirect("/tiramisu/posts", 303);
+    }
+    
+    this.set("post", post);
+    this.getResponse().setTemplate("/posts/update.vm");
+    this.getResponse().setPageTitle(post.getTitle());
+    
     // Update a post here or render form, same as create.
     return this.getResponse();
   }

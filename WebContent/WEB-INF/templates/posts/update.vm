@@ -19,7 +19,7 @@
 	</tbody>
 </table>
 
-<form action="/tiramisu/posts/$!post.getId()" method="PUT">
+<form action="/tiramisu/posts/update/$!post.getId()" method="POST">
 	<div>
 		<label for="title">Title:</label>
 		<input type="text" id="title" name="post_title" value="$!post.getTitle()" />
