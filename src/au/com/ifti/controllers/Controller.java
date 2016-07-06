@@ -66,8 +66,10 @@ public abstract class Controller {
   
   public Boolean save(Model object) {
     this.getSession().beginTransaction();
-    object.setCreated(new Date());
-    object.setModified(new Date());
+    // So the timestamps match.
+    Date now = new Date();
+    object.setCreated(now);
+    object.setModified(now);
     this.getSession().save(object);
     this.getSession().getTransaction().commit();
     return true;
