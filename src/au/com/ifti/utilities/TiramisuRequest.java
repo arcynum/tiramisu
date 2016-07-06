@@ -1,14 +1,16 @@
 package au.com.ifti.utilities;
 
-import javax.servlet.http.HttpServletRequest;
-
+import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class TiramisuRequest {
   
   private String requestUri;
   private String method;
   private Map<String, String[]> parameterMap;
+  private Map<String, String> headers = new HashMap<String, String>();
   
   public TiramisuRequest(HttpServletRequest request) {
     this.setRequestUri(request.getRequestURI());
@@ -45,6 +47,18 @@ public class TiramisuRequest {
       return this.parameterMap.get(parameter)[0];
     }
     return "";
+  }
+
+  public Map<String, String> getHeaders() {
+    return headers;
+  }
+
+  public void setHeaders(Map<String, String> headers) {
+    this.headers = headers;
+  }
+  
+  public void setHeader(String key, String value) {
+    this.headers.put(key, value);
   }
 
 }

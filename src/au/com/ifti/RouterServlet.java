@@ -17,6 +17,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.hibernate.Session;
 
 import au.com.ifti.utilities.HibernateUtil;
+import au.com.ifti.utilities.TiramisuResponse;
 
 /**
  * Servlet implementation class Router
@@ -57,23 +58,28 @@ public class RouterServlet extends HttpServlet {
   /**
    * @see HttpServlet#service()
    */
-  protected void service(HttpServletRequest request, HttpServletResponse response) {
+  protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
     // Open a database session and pass it to the dispatcher.
     // Manual handling the session for the request lifecycle is better.
     Session session = HibernateUtil.getSessionFactory().openSession();
     
     // Create the application URL Router and pass it the servlet request and response.
-    UrlDispatcher dispatcher = new UrlDispatcher(request, response, session);
+    UrlDispatcher dispatcher = new UrlDispatcher(session);
     
     // Dispatch the request to the application.
-    dispatcher.dispatch();
+    // I really only need the response here, so just return it, durr.
+    TiramisuResponse tiramisuResponse = dispatcher.dispatch(servletRequest, servletResponse);
     
     // Apply the generic response headers for this application.
-    addGenericHeaders(response);
+    // This is not ideal.
+    addGenericHeaders(servletResponse);
+    
+    // Add generated headers
+    addGeneratedHeaders(servletResponse, tiramisuResponse);
     
     // Set the response status code.
-    response.setStatus(dispatcher.getResponse().getStatusCode());
+    servletResponse.setStatus(tiramisuResponse.getStatusCode());
     
     // Create the velocity context.
     VelocityContext context = new VelocityContext();
@@ -83,12 +89,12 @@ public class RouterServlet extends HttpServlet {
     try {
       // Loop through the assigned keys in the response and render them to the template.
       // Using a named array here means you can access by name from the template.
-      for (String key : dispatcher.getResponse().getData().keySet()) {
-        context.put(key, dispatcher.getResponse().getData().get(key));
+      for (String key : tiramisuResponse.getData().keySet()) {
+        context.put(key, tiramisuResponse.getData().get(key));
       }
-      context.put("content", dispatcher.getResponse().getTemplate());
-      context.put("pageTitle", dispatcher.getResponse().getPageTitle());
-      velocityTemplate.merge(context, response.getWriter());
+      context.put("content", tiramisuResponse.getTemplate());
+      context.put("pageTitle", tiramisuResponse.getPageTitle());
+      velocityTemplate.merge(context, servletResponse.getWriter());
     }
     catch (ResourceNotFoundException | ParseErrorException | MethodInvocationException | IOException e) {
       e.printStackTrace();
@@ -101,6 +107,12 @@ public class RouterServlet extends HttpServlet {
   private void addGenericHeaders(HttpServletResponse response) {
     response.setCharacterEncoding("utf-8");
     response.setContentType("text/html;charset=UTF-8");
+  }
+  
+  private void addGeneratedHeaders(HttpServletResponse servletResponse, TiramisuResponse tiramisuResponse) {
+    for (String key : tiramisuResponse.getHeaders().keySet()) {
+      servletResponse.setHeader(key, tiramisuResponse.getHeaders().get(key));
+    }
   }
   
   /**

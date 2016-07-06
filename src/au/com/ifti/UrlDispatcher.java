@@ -24,8 +24,6 @@ public class UrlDispatcher {
   
   private static final Logger log = Logger.getLogger(UrlDispatcher.class.getName());
 
-  private TiramisuRequest request;
-  private TiramisuResponse response;
   private Session session;
 
   /**
@@ -37,9 +35,8 @@ public class UrlDispatcher {
    * Dispatching constructor, currently building the route list by hand in this function. Need to
    * ensure the velocity engine is initialised.
    */
-  public UrlDispatcher(HttpServletRequest servletRequest, HttpServletResponse servletResponse, Session session) {
-    this.setRequest(new TiramisuRequest(servletRequest));
-    this.setResponse(new TiramisuResponse(servletResponse));
+  public UrlDispatcher(Session session) {
+    
     this.setSession(session);
 
     try {
@@ -50,10 +47,6 @@ public class UrlDispatcher {
       routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("GET"), PostController.class, PostController.class.getDeclaredMethod("read", String.class)));
       routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("PUT"), PostController.class, PostController.class.getDeclaredMethod("update", String.class)));
       routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("DELETE"), PostController.class, PostController.class.getDeclaredMethod("delete", String.class)));
-      
-      // Report Routes
-      // routes.add(new Route(Pattern.compile("^.*/reports[/]?"), Arrays.asList("GET"), ReportController.class, ReportController.class.getDeclaredMethod("index")));
-      // routes.add(new Route(Pattern.compile("^.*/reports/([0-9]{1,})[/]?"), Arrays.asList("GET"), ReportController.class, ReportController.class.getDeclaredMethod("view", String.class)));
       
     } catch (NoSuchMethodException | SecurityException e) {
       log.log(Level.SEVERE, "The route definitions defined for the web application failed.");
@@ -68,55 +61,66 @@ public class UrlDispatcher {
    * @param request
    * @param response
    */
-  public void dispatch() {
+  public TiramisuResponse dispatch(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
     
-    System.out.println(String.format("Method: %s", this.getRequest().getMethod()));
+    // Create the request and response objects, only need to return the response one.
+    TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
+    TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
     
     Boolean matched = false;
 
     // Loop through the routes looking for a match.
     for (Route route : routes) {
-      Matcher m = route.getPattern().matcher(this.getRequest().getRequestUri());
+      
+      // Do any of the defined routes match the current URI?
+      Matcher m = route.getPattern().matcher(tiramisuRequest.getRequestUri());
+      
       // If the URL pattern matches.
       if (m.matches()) {
 
-        // If the HTTP method matches.
-        if (route.getHttpMethods().contains(this.getRequest().getMethod())) {
+        // If the HTTP method matches as well.
+        if (route.getHttpMethods().contains(tiramisuRequest.getMethod())) {
+          
+          // Flag used to output a 404, because the route never matched.
           matched = true;
-
-          System.out.println(String.format("Matched on: %s over %s", m.group(0), this.getRequest().getMethod()));
+          
           try {
 
             // Create the controller (constructor).
             Object controller = route.getController()
                 .getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class, Session.class)
-                .newInstance(this.getRequest(), this.getResponse(), this.getSession());
+                .newInstance(tiramisuRequest, tiramisuResponse, this.getSession());
 
             // Get the arguments.
+            // Can't used named groups, have to loop through the counts or its not generic.
             Object[] arguments = new String[m.groupCount()];
             for (int i = 0; i < m.groupCount(); i++) {
               arguments[i] = m.group(i + 1);
             }
 
-            // Invoke the function.
-            route.getMethod().invoke(controller, arguments);
-          } catch (InstantiationException | IllegalAccessException | NoSuchMethodException
-              | SecurityException | IllegalArgumentException e) {
+            // Invoke the controller function.
+            tiramisuResponse = (TiramisuResponse) route.getMethod().invoke(controller, arguments);
+            
+          }
+          catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException e) {
             e.printStackTrace();
-          } catch (InvocationTargetException e) {
+          }
+          // Invovation exception is the catch-all for inner controller exceptions.
+          // These are esaily caught an handled here.
+          catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
             log.log(Level.SEVERE, cause.toString(), cause);
             if (cause instanceof BadRequestException) {
               log.severe("Bad request exception");
-              this.getResponse().setStatusCode(400);
-              this.getResponse().setTemplate("400.vm");
-              this.getResponse().setPageTitle("400");
+              tiramisuResponse.setStatusCode(400);
+              tiramisuResponse.setTemplate("400.vm");
+              tiramisuResponse.setPageTitle("400");
             }
             if (cause instanceof NotFoundException) {
               log.severe("Not found exception");
-              this.getResponse().setStatusCode(404);
-              this.getResponse().setTemplate("404.vm");
-              this.getResponse().setPageTitle("404");
+              tiramisuResponse.setStatusCode(404);
+              tiramisuResponse.setTemplate("404.vm");
+              tiramisuResponse.setPageTitle("404");
             }
           }
           break;
@@ -124,29 +128,15 @@ public class UrlDispatcher {
       }
     }
 
-    // Nothing matched, 404.
+    // Nothing matched any of the routes, 404.
     if (!matched) {
-      this.getResponse().setStatusCode(404);
-      this.getResponse().setTemplate("404.vm");
-      this.getResponse().setPageTitle("404");
+      tiramisuResponse.setStatusCode(404);
+      tiramisuResponse.setTemplate("404.vm");
+      tiramisuResponse.setPageTitle("404");
     }
-
-  }
-
-  public TiramisuRequest getRequest() {
-    return request;
-  }
-
-  public TiramisuResponse getResponse() {
-    return response;
-  }
-
-  public void setRequest(TiramisuRequest request) {
-    this.request = request;
-  }
-
-  public void setResponse(TiramisuResponse response) {
-    this.response = response;
+    
+    // Return the response.
+    return tiramisuResponse;
   }
 
   public Session getSession() {

@@ -15,29 +15,34 @@ public class PostController extends Controller {
     super(request, response, session);
   }
   
-  public void index() {
+  public TiramisuResponse index() {
     System.out.println("Post Index");
     List<?> posts = findAll(PostModel.class);
-    this.getResponse().addViewVariable("posts", posts);
+    this.set("posts", posts);
     this.getResponse().setTemplate("/posts/index.vm");
     this.getResponse().setPageTitle("Posts Index");
+    return this.getResponse();
   }
   
-  public void create() throws NotFoundException {
+  public TiramisuResponse create() throws NotFoundException {
     System.out.println("Post Create");
     
     if (this.request.getMethod() == "POST") {
       PostModel post = new PostModel();
       post.setTitle(this.getRequest().getParameter("post_title"));
       post.setBody(this.getRequest().getParameter("post_body"));
+      this.save(post);
+      return this.redirect("/tiramisu/posts", 303);
     }
     
     // Render the create form.
     this.getResponse().setTemplate("/posts/create.vm");
     this.getResponse().setPageTitle("Create new post");
+    
+    return this.getResponse();
   }
   
-  public void read(String id) throws NotFoundException {
+  public TiramisuResponse read(String id) throws NotFoundException {
     System.out.println("Post Read");
     PostModel post = findById(PostModel.class, Integer.parseInt(id));
     if (post == null) {
@@ -46,16 +51,19 @@ public class PostController extends Controller {
     this.getResponse().addViewVariable("post", post);
     this.getResponse().setTemplate("/posts/read.vm");
     this.getResponse().setPageTitle(post.getTitle());
+    return this.getResponse();
   }
   
-  public void update(String id) throws NotFoundException {
+  public TiramisuResponse update(String id) throws NotFoundException {
     // Update a post here or render form, same as create.
+    return this.getResponse();
   }
   
-  public void delete(String id) throws NotFoundException {
+  public TiramisuResponse delete(String id) throws NotFoundException {
     if (this.request.getMethod() == "DELETE") {
       // Delete a post here.
     }
+    return this.getResponse();
   }
 
 }

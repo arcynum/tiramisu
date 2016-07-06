@@ -63,16 +63,37 @@ public abstract class Controller {
     }
   }
   
-  public <T extends Model> T create(Class<T> classIdentifier) {
+  public Boolean save(Model object) {
     this.getSession().beginTransaction();
-    Object result = this.getSession().get(classIdentifier, id);
+    this.getSession().save(object);
     this.getSession().getTransaction().commit();
-
-    try {
-      return classIdentifier.cast(result);
-    } catch (ClassCastException e) {
-      return null;
-    }
+    return true;
+  }
+  
+  public void set(String key, Object value) {
+    this.getResponse().addViewVariable(key, value);
+  }
+  
+  public TiramisuResponse redirect(String url) {
+    
+    // Set the status code
+    this.getResponse().setStatusCode(302);
+    
+    // Set the location header.
+    this.getResponse().setHeader("Location", url);
+    
+    return this.getResponse();
+  }
+  
+  public TiramisuResponse redirect(String url, Integer code) {
+    
+    // Set the status code
+    this.getResponse().setStatusCode(code);
+    
+    // Set the location header.
+    this.getResponse().setHeader("Location", url);
+    
+    return this.getResponse();
   }
 
 }
