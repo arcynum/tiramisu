@@ -1,5 +1,6 @@
 package au.com.ifti.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -65,6 +66,16 @@ public abstract class Controller {
   
   public Boolean save(Model object) {
     this.getSession().beginTransaction();
+    object.setCreated(new Date());
+    object.setModified(new Date());
+    this.getSession().save(object);
+    this.getSession().getTransaction().commit();
+    return true;
+  }
+  
+  public Boolean update(Model object) {
+    this.getSession().beginTransaction();
+    object.setModified(new Date());
     this.getSession().save(object);
     this.getSession().getTransaction().commit();
     return true;
