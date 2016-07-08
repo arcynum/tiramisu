@@ -7,7 +7,14 @@
         <meta name="description" content="Tiramisu Application">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="format-detection" content="telephone=no">
-        <link rel="stylesheet" href="$!STATIC_ROOT/static/wut.css" />
+        <link rel="stylesheet" href="$!STATIC_ROOT/css/reset.css" />
+        <link rel="stylesheet" href="$!STATIC_ROOT/css/style.css" />
 	</head>
-	<body>#parse($!content)</body>
+	<body>
+		<!-- Menu -->
+		<div class="banner flex-container">
+			<h1 class="layout-margin">Hello Tiramisu</h1>
+		</div>
+		<div>#parse($!content)</div>
+	</body>
 </html>

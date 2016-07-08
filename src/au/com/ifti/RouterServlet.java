@@ -96,7 +96,7 @@ public class RouterServlet extends HttpServlet {
       }
       context.put("content", tiramisuResponse.getTemplate());
       context.put("pageTitle", tiramisuResponse.getPageTitle());
-      context.put("STATIC_ROOT", servletRequest.getContextPath());
+      context.put("STATIC_ROOT", servletRequest.getContextPath() + "/static");
       velocityTemplate.merge(context, servletResponse.getWriter());
     }
     catch (ResourceNotFoundException | ParseErrorException | MethodInvocationException | IOException e) {

@@ -1,0 +1,16 @@
+.flex-container {
+	display: flex;
+}
+.layout-margin {
+	margin: 8px;
+}
+.layout-padding {
+	padding: 8px;
+}
+
+
+.banner {
+	background-color: #000;
+	color: #FFF;
+}
+
