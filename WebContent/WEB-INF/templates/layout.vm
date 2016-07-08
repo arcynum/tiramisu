@@ -7,6 +7,7 @@
         <meta name="description" content="Tiramisu Application">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="format-detection" content="telephone=no">
+        <link rel="stylesheet" href="$!STATIC_ROOT/static/wut.css" />
 	</head>
 	<body>#parse($!content)</body>
 </html>

@@ -3,7 +3,6 @@ package au.com.ifti;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +14,8 @@ import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import au.com.ifti.utilities.HibernateUtil;
 import au.com.ifti.utilities.TiramisuResponse;
@@ -22,9 +23,10 @@ import au.com.ifti.utilities.TiramisuResponse;
 /**
  * Servlet implementation class Router
  */
-@WebServlet("/*")
 public class RouterServlet extends HttpServlet {
+  
   private static final long serialVersionUID = 1L;
+  private final Logger log = LoggerFactory.getLogger(RouterServlet.class);
   
   private VelocityEngine velocityEngine;
 
@@ -94,6 +96,7 @@ public class RouterServlet extends HttpServlet {
       }
       context.put("content", tiramisuResponse.getTemplate());
       context.put("pageTitle", tiramisuResponse.getPageTitle());
+      context.put("STATIC_ROOT", servletRequest.getContextPath());
       velocityTemplate.merge(context, servletResponse.getWriter());
     }
     catch (ResourceNotFoundException | ParseErrorException | MethodInvocationException | IOException e) {
