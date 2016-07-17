@@ -43,9 +43,9 @@ public class UrlDispatcher {
       
       // Post Routes
       routes.add(new Route(Pattern.compile("^.*/posts[/]?"), Arrays.asList("GET"), PostController.class, PostController.class.getDeclaredMethod("index")));
-      routes.add(new Route(Pattern.compile("^.*/posts/create[/]?"), Arrays.asList("GET", "POST"), PostController.class, PostController.class.getDeclaredMethod("create")));
+      routes.add(new Route(Pattern.compile("^.*/posts[/]?"), Arrays.asList("POST"), PostController.class, PostController.class.getDeclaredMethod("create")));
       routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("GET"), PostController.class, PostController.class.getDeclaredMethod("read", String.class)));
-      routes.add(new Route(Pattern.compile("^.*/posts/update/([0-9]{1,})[/]?"), Arrays.asList("GET", "POST"), PostController.class, PostController.class.getDeclaredMethod("update", String.class)));
+      routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("PUT"), PostController.class, PostController.class.getDeclaredMethod("update", String.class)));
       routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("DELETE"), PostController.class, PostController.class.getDeclaredMethod("delete", String.class)));
       
     } catch (NoSuchMethodException | SecurityException e) {
@@ -105,8 +105,8 @@ public class UrlDispatcher {
           catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException e) {
             e.printStackTrace();
           }
-          // Invovation exception is the catch-all for inner controller exceptions.
-          // These are esaily caught an handled here.
+          // Innovation exception is the catch-all for inner controller exceptions.
+          // These are easily caught an handled here.
           catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
             log.log(Level.SEVERE, cause.toString(), cause);

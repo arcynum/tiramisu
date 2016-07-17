@@ -39,6 +39,9 @@ public class RouterServlet extends HttpServlet {
   
   @Override
   public void init() {
+    
+    log.info("Initialising servlet");
+    
     // Create the velocity properties.
     Properties props = new Properties();
     props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
@@ -61,6 +64,8 @@ public class RouterServlet extends HttpServlet {
    * @see HttpServlet#service()
    */
   protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+    
+    log.info("Processing request");
 
     // Open a database session and pass it to the dispatcher.
     // Manual handling the session for the request lifecycle is better.

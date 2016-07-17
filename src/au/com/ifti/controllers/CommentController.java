@@ -9,7 +9,6 @@ public class CommentController extends Controller {
 
   public CommentController(TiramisuRequest request, TiramisuResponse response, Session session) {
     super(request, response, session);
-    // TODO Auto-generated constructor stub
   }
 
 }
