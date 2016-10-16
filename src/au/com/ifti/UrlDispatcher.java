@@ -20,128 +20,149 @@ import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
+/**
+ * The class which handles the routing for the application. The URLDispatcher
+ * contains a list of routes which are checked against the HTTP request. If a
+ * match is found, it uses Java Reflection to initialise and then call the
+ * appropriate controller.
+ * 
+ * @author Chris Hamilton
+ */
 public class UrlDispatcher {
-  
-  private static final Logger log = Logger.getLogger(UrlDispatcher.class.getName());
 
-  private Session session;
+	/**
+	 * Class logger.
+	 */
+	private static final Logger log = Logger.getLogger(UrlDispatcher.class.getName());
+	
+	/**
+	 * The hibernate session which this particular request will use.
+	 * This does not need to be initialised, as it will be getting assigned.
+	 */
+	private Session session = null;
 
-  /**
-   * This map is a regex expression pattern to the class to load next.
-   */
-  private List<Route> routes = new ArrayList<>();
+	/**
+	 * The container of routes which the current request will be checked against.
+	 */
+	private List<Route> routes = new ArrayList<>();
+	
+	public UrlDispatcher(Session session) {
 
-  /**
-   * Dispatching constructor, currently building the route list by hand in this function. Need to
-   * ensure the velocity engine is initialised.
-   */
-  public UrlDispatcher(Session session) {
-    
-    this.setSession(session);
+		this.setSession(session);
 
-    try {
-      
-      // Post Routes
-      routes.add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("index")));
-      routes.add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
-      
-    } catch (NoSuchMethodException | SecurityException e) {
-      log.log(Level.SEVERE, "The route definitions defined for the web application failed.");
-      log.log(Level.SEVERE, e.toString(), e);
-    }
+		try {
 
-  }
+			// Post Routes
+			routes.add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class,
+					MessageController.class.getDeclaredMethod("index")));
+			routes.add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"),
+					MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
 
-  /**
-   * The dispatch function called by the servlet to start the routing process.
-   * 
-   * @param request
-   * @param response
-   */
-  public TiramisuResponse dispatch(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-    
-    // Create the request and response objects, only need to return the response one.
-    TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
-    TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
-    
-    Boolean matched = false;
+		} catch (NoSuchMethodException | SecurityException e) {
+			log.log(Level.SEVERE, "The route definitions defined for the web application failed.");
+			log.log(Level.SEVERE, e.toString(), e);
+		}
 
-    // Loop through the routes looking for a match.
-    for (Route route : routes) {
-      
-      // Do any of the defined routes match the current URI?
-      Matcher m = route.getPattern().matcher(tiramisuRequest.getRequestUri());
-      
-      // If the URL pattern matches.
-      if (m.matches()) {
+	}
 
-        // If the HTTP method matches as well.
-        if (route.getHttpMethods().contains(tiramisuRequest.getMethod())) {
-          
-          // Flag used to output a 404, because the route never matched.
-          matched = true;
-          
-          try {
+	/**
+	 * The dispatch function called by the servlet to start the routing process.
+	 * This function will check the current request with the list of available routes and HTTP methods.
+	 * If a match is found, it will create the controller object and call its method with reflection.
+	 * If no match is found, the it will set the response to 404.
+	 * This function also needs to handle exceptions coming back from the controller.
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	public TiramisuResponse dispatch(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
-            // Create the controller (constructor).
-            Object controller = route.getController()
-                .getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class, Session.class)
-                .newInstance(tiramisuRequest, tiramisuResponse, this.getSession());
+		// Create the request and response objects, only need to return the
+		// response one.
+		TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
+		TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
 
-            // Get the arguments.
-            // Can't used named groups, have to loop through the counts or its not generic.
-            Object[] arguments = new String[m.groupCount()];
-            for (int i = 0; i < m.groupCount(); i++) {
-              arguments[i] = m.group(i + 1);
-            }
+		Boolean matched = false;
 
-            // Invoke the controller function.
-            tiramisuResponse = (TiramisuResponse) route.getMethod().invoke(controller, arguments);
-            
-          }
-          catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException e) {
-            e.printStackTrace();
-          }
-          // Innovation exception is the catch-all for inner controller exceptions.
-          // These are easily caught an handled here.
-          catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            log.log(Level.SEVERE, cause.toString(), cause);
-            if (cause instanceof BadRequestException) {
-              log.severe("Bad request exception");
-              tiramisuResponse.setStatusCode(400);
-              tiramisuResponse.setTemplate("400.vm");
-              tiramisuResponse.setPageTitle("400");
-            }
-            if (cause instanceof NotFoundException) {
-              log.severe("Not found exception");
-              tiramisuResponse.setStatusCode(404);
-              tiramisuResponse.setTemplate("404.vm");
-              tiramisuResponse.setPageTitle("404");
-            }
-          }
-          break;
-        }
-      }
-    }
+		// Loop through the routes looking for a match.
+		for (Route route : routes) {
 
-    // Nothing matched any of the routes, 404.
-    if (!matched) {
-      tiramisuResponse.setStatusCode(404);
-      tiramisuResponse.setTemplate("404.vm");
-      tiramisuResponse.setPageTitle("404");
-    }
-    
-    // Return the response.
-    return tiramisuResponse;
-  }
+			// Do any of the defined routes match the current URI?
+			Matcher m = route.getPattern().matcher(tiramisuRequest.getRequestUri());
 
-  public Session getSession() {
-    return session;
-  }
+			// If the URL pattern matches.
+			if (m.matches()) {
 
-  public void setSession(Session session) {
-    this.session = session;
-  }
+				// If the HTTP method matches as well.
+				if (route.getHttpMethods().contains(tiramisuRequest.getMethod())) {
+
+					// Flag used to output a 404, because the route never
+					// matched.
+					matched = true;
+
+					try {
+
+						// Create the controller (constructor).
+						Object controller = route.getController()
+								.getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class, Session.class)
+								.newInstance(tiramisuRequest, tiramisuResponse, this.getSession());
+
+						// Get the arguments.
+						// Can't used named groups, have to loop through the
+						// counts or its not generic.
+						Object[] arguments = new String[m.groupCount()];
+						for (int i = 0; i < m.groupCount(); i++) {
+							arguments[i] = m.group(i + 1);
+						}
+
+						// Invoke the controller function.
+						tiramisuResponse = (TiramisuResponse) route.getMethod().invoke(controller, arguments);
+
+					} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
+							| IllegalArgumentException e) {
+						e.printStackTrace();
+					}
+					// Innovation exception is the catch-all for inner
+					// controller exceptions.
+					// These are easily caught an handled here.
+					catch (InvocationTargetException e) {
+						Throwable cause = e.getCause();
+						log.log(Level.SEVERE, cause.toString(), cause);
+						if (cause instanceof BadRequestException) {
+							log.severe("Bad request exception");
+							tiramisuResponse.setStatusCode(400);
+							tiramisuResponse.setTemplate("400.vm");
+							tiramisuResponse.setPageTitle("400");
+						}
+						if (cause instanceof NotFoundException) {
+							log.severe("Not found exception");
+							tiramisuResponse.setStatusCode(404);
+							tiramisuResponse.setTemplate("404.vm");
+							tiramisuResponse.setPageTitle("404");
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		// Nothing matched any of the routes, 404.
+		if (!matched) {
+			tiramisuResponse.setStatusCode(404);
+			tiramisuResponse.setTemplate("404.vm");
+			tiramisuResponse.setPageTitle("404");
+		}
+
+		// Return the response.
+		return tiramisuResponse;
+	}
+
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
 
 }

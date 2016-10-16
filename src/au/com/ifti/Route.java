@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * The route class is used to wrap up a web endpoint in a single object. The web
  * application then checks all routes to determine what the URL matched.
  * 
- * @author CIH221
+ * @author Chris Hamilton
  */
 public class Route {
 
