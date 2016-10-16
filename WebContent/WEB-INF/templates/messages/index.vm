@@ -1,0 +1,20 @@
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Message</th>
+            <th>Href</th>
+        </tr>
+    </thead>
+    <tbody>
+        #foreach($message in $messages)
+        <tr>
+            <td>$!message.getId()</td>
+            <td>$!message.getTitle()</td>
+            <td>$!message.getMessage()</td>
+            <td>$!message.getHref()</td>
+        </tr>
+        #end
+    </tbody>
+</table>

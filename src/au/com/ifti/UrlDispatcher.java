@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
 
-import au.com.ifti.controllers.PostController;
+import au.com.ifti.controllers.MessageController;
 import au.com.ifti.exceptions.BadRequestException;
 import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.utilities.TiramisuRequest;
@@ -42,11 +42,8 @@ public class UrlDispatcher {
     try {
       
       // Post Routes
-      routes.add(new Route(Pattern.compile("^.*/posts[/]?"), Arrays.asList("GET"), PostController.class, PostController.class.getDeclaredMethod("index")));
-      routes.add(new Route(Pattern.compile("^.*/posts[/]?"), Arrays.asList("POST"), PostController.class, PostController.class.getDeclaredMethod("create")));
-      routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("GET"), PostController.class, PostController.class.getDeclaredMethod("read", String.class)));
-      routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("PUT"), PostController.class, PostController.class.getDeclaredMethod("update", String.class)));
-      routes.add(new Route(Pattern.compile("^.*/posts/([0-9]{1,})[/]?"), Arrays.asList("DELETE"), PostController.class, PostController.class.getDeclaredMethod("delete", String.class)));
+      routes.add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("index")));
+      routes.add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
       
     } catch (NoSuchMethodException | SecurityException e) {
       log.log(Level.SEVERE, "The route definitions defined for the web application failed.");
