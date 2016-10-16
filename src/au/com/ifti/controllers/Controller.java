@@ -90,7 +90,7 @@ public abstract class Controller {
   public TiramisuResponse redirect(String url) {
     
     // Set the status code
-    this.getResponse().setStatusCode(302);
+    this.getResponse().setStatusCode(303);
     
     // Set the location header.
     this.getResponse().setHeader("Location", url);
