@@ -21,9 +21,9 @@ import au.com.ifti.utilities.HibernateUtil;
 import au.com.ifti.utilities.TiramisuResponse;
 
 /**
- * @author Chris Hamilton
- * 
  * Primary Servlet for the application.
+ * 
+ * @author Chris Hamilton
  */
 public class RouterServlet extends HttpServlet {
 
