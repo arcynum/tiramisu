@@ -1,11 +1,23 @@
 package au.com.ifti.exceptions;
 
-public class MethodNotAllowedException extends Exception {
+/**
+ * Method not allowed exception.
+ * 
+ * @author CIH221
+ *
+ */
+public class MethodNotAllowedException extends TiramisuException {
 
-  private static final long serialVersionUID = 1415787611547196001L;
-  
-  public MethodNotAllowedException() {
-    super();
-  }
+	/**
+	 * Default serial ID.
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The constructor for the exception.
+	 */
+	public MethodNotAllowedException() {
+		super();
+	}
 
 }
