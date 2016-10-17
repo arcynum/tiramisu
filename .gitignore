@@ -1,5 +1,2 @@
-.classpath
-.project
 .settings/
-build/
-src/au/com/ifti/models/hibernate/database.xml
+database.xml
