@@ -5,60 +5,89 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * The web application request object. This object wraps around the servlet
+ * HttpServletRequest object to add application specific functionality.
+ * 
+ * @author Chris Hamilton
+ * @see HttpServletRequest
+ */
 public class TiramisuRequest {
-  
-  private String requestUri;
-  private String method;
-  private Map<String, String[]> parameterMap;
-  private Map<String, String> headers = new HashMap<String, String>();
-  
-  public TiramisuRequest(HttpServletRequest request) {
-    this.setRequestUri(request.getRequestURI());
-    this.setMethod(request.getMethod());
-    this.setParameterMap(request.getParameterMap());
-  }
 
-  public String getRequestUri() {
-    return requestUri;
-  }
+	/**
+	 * The HTTP request URI.
+	 */
+	private String requestUri;
 
-  public void setRequestUri(String requestUri) {
-    this.requestUri = requestUri;
-  }
+	/**
+	 * The HTTP request method.
+	 */
+	private String method;
 
-  public String getMethod() {
-    return method;
-  }
+	/**
+	 * A map of the HTTP request parameters.
+	 */
+	private Map<String, String[]> parameterMap;
 
-  public void setMethod(String method) {
-    this.method = method;
-  }
+	/**
+	 * A map of the HTTP request headers.
+	 */
+	private Map<String, String> headers = new HashMap<String, String>();
 
-  public Map<String, String[]> getParameterMap() {
-    return parameterMap;
-  }
+	/**
+	 * The default constructor for the TiramisuRequest object. This sets the
+	 * internal objects for easier consumption.
+	 * 
+	 * @param request
+	 *            the HTTPServletRequest object.
+	 */
+	public TiramisuRequest(HttpServletRequest request) {
+		this.setRequestUri(request.getRequestURI());
+		this.setMethod(request.getMethod());
+		this.setParameterMap(request.getParameterMap());
+	}
 
-  public void setParameterMap(Map<String, String[]> parameterMap) {
-    this.parameterMap = parameterMap;
-  }
-  
-  public String getParameter(String parameter) {
-    if (this.parameterMap.get(parameter).length == 1) {
-      return this.parameterMap.get(parameter)[0];
-    }
-    return "";
-  }
+	public String getRequestUri() {
+		return requestUri;
+	}
 
-  public Map<String, String> getHeaders() {
-    return headers;
-  }
+	public void setRequestUri(String requestUri) {
+		this.requestUri = requestUri;
+	}
 
-  public void setHeaders(Map<String, String> headers) {
-    this.headers = headers;
-  }
-  
-  public void setHeader(String key, String value) {
-    this.headers.put(key, value);
-  }
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	public Map<String, String[]> getParameterMap() {
+		return parameterMap;
+	}
+
+	public void setParameterMap(Map<String, String[]> parameterMap) {
+		this.parameterMap = parameterMap;
+	}
+
+	public String getParameter(String parameter) {
+		if (this.parameterMap.get(parameter).length == 1) {
+			return this.parameterMap.get(parameter)[0];
+		}
+		return "";
+	}
+
+	public Map<String, String> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
+	}
+
+	public void setHeader(String key, String value) {
+		this.headers.put(key, value);
+	}
 
 }

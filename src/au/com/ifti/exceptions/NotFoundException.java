@@ -3,7 +3,8 @@ package au.com.ifti.exceptions;
 /**
  * Not Found Exception. If the object which you are requesting does not exist.
  * This is equivalent to a 404.
- * @author CIH221
+ * 
+ * @author Chris Hamilton
  *
  */
 public class NotFoundException extends TiramisuException {

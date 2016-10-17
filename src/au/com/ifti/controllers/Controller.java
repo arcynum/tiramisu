@@ -13,7 +13,7 @@ import au.com.ifti.utilities.TiramisuResponse;
  * This is the abstract controller for the entire application. All controllers
  * need to extend this controller.
  * 
- * @author CIH221
+ * @author Chris Hamilton
  */
 public abstract class Controller {
 

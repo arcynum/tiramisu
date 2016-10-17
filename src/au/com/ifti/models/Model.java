@@ -2,37 +2,59 @@ package au.com.ifti.models;
 
 import java.util.Date;
 
+/**
+ * Abstract Data Model for the framework. All models in the application need to
+ * extend this base model. This model also tacks on created/modified
+ * functionality to each object.
+ * 
+ * @author Chris Hamilton
+ *
+ */
 public abstract class Model {
-  
-  protected Integer id;
-  protected Date created;
-  protected Date modified;
-  
-  public Model() {
-  }
 
-  public Integer getId() {
-    return id;
-  }
+	/**
+	 * Primary key for the model.
+	 */
+	protected Integer id;
+	
+	/**
+	 * Created timestamp for the model.
+	 */
+	protected Date created;
+	
+	/**
+	 * Modified timestamp for the model.
+	 */
+	protected Date modified;
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+	/**
+	 * Default constructor for the Model.
+	 */
+	public Model() {
+	}
 
-  public Date getCreated() {
-    return created;
-  }
+	public Integer getId() {
+		return id;
+	}
 
-  public void setCreated(Date created) {
-    this.created = created;
-  }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-  public Date getModified() {
-    return modified;
-  }
+	public Date getCreated() {
+		return created;
+	}
 
-  public void setModified(Date modified) {
-    this.modified = modified;
-  }
-  
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Date getModified() {
+		return modified;
+	}
+
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
 }

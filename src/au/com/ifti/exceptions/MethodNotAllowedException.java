@@ -3,8 +3,7 @@ package au.com.ifti.exceptions;
 /**
  * Method not allowed exception.
  * 
- * @author CIH221
- *
+ * @author Chris Hamilton
  */
 public class MethodNotAllowedException extends TiramisuException {
 
