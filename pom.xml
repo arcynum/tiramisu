@@ -6,7 +6,7 @@
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Tiramisu Web Framework</name>
-	<url>http://maven.apache.org</url>
+	<url>https://ifti.com.au</url>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -57,4 +57,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<description>The Tiramisu Web Application Framework.
+Currently a work in progress.</description>
 </project>
