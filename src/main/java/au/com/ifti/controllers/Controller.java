@@ -20,12 +20,12 @@ public abstract class Controller {
 	/**
 	 * The application wrapped HTTP request object.
 	 */
-	protected TiramisuRequest request;
+	protected TiramisuRequest request = null;
 	
 	/**
 	 * The application wrapped HTTP response object.
 	 */
-	protected TiramisuResponse response;
+	protected TiramisuResponse response = null;
 	
 	/**
 	 * The session object, which will be passed in from the dispatcher.
