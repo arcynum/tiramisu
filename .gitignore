@@ -1,3 +1,4 @@
 .settings/
 database.xml
 target/
+src/main/java/au/com/ifti/models/hibernate/database_hana.xml
