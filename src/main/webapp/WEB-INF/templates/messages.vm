@@ -1,0 +1,3 @@
+#foreach($message in $messages)
+	<div class="message">$message</div>
+#end

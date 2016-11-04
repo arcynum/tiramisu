@@ -1,7 +1,9 @@
 package au.com.ifti.utilities;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +46,12 @@ public class TiramisuResponse {
 	 * The map of HTTP headers for the response.
 	 */
 	private Map<String, String> headers = new HashMap<String, String>();
+	
+	/**
+	 * This is the container to store flash messages that should be added to the session.
+	 * These messages are written to the session variable in the servlet itself.
+	 */
+	private List<String> flashMessages = new ArrayList<String>();
 
 	/**
 	 * Default response constructor.
@@ -107,6 +115,18 @@ public class TiramisuResponse {
 
 	public void setHeader(String key, String value) {
 		this.headers.put(key, value);
+	}
+
+	public List<String> getFlashMessages() {
+		return flashMessages;
+	}
+
+	public void setFlashMessages(List<String> flashMessages) {
+		this.flashMessages = flashMessages;
+	}
+	
+	public void addFlashMessage(String message) {
+		this.getFlashMessages().add(message);
 	}
 
 }

@@ -52,6 +52,9 @@ public class UserController extends Controller {
 			// Finally save the user.
 			this.save(user);
 			
+			// Add a flash message.
+			this.getResponse().addFlashMessage("New user created");
+			
 			// Redirect to the users index.
 			return this.redirect("/tiramisu/users", 303);
 		}
@@ -103,12 +106,13 @@ public class UserController extends Controller {
 				// Was the login successful?
 				if (BCrypt.checkpw(password, user.getPassword())) {
 					System.out.println("Login Successful");
-					this.getFlash().set("Login Successful");
+					this.getResponse().addFlashMessage("Login Successful");
 					return this.redirect("/tiramisu/users", 303);
 				}
 			}
 			
 			System.out.println("Login Error");
+			this.getResponse().addFlashMessage("Login Error");
 		}
 
 		// Render the create form.

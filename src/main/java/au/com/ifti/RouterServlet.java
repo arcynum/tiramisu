@@ -1,6 +1,8 @@
 package au.com.ifti;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServlet;
@@ -111,26 +113,58 @@ public class RouterServlet extends HttpServlet {
 
 		// Set the response status code.
 		servletResponse.setStatus(tiramisuResponse.getStatusCode());
-
-		// Create the velocity context.
-		VelocityContext context = new VelocityContext();
-
-		// Fetch the template and combine.
-		Template velocityTemplate = velocityEngine.getTemplate("layout.vm");
-		try {
-			// Loop through the assigned keys in the response and render them to
-			// the template.
-			// Using a named array here means you can access by name from the
-			// template.
-			for (String key : tiramisuResponse.getData().keySet()) {
-				context.put(key, tiramisuResponse.getData().get(key));
+		
+		// New flash array.
+		List<String> newFlashList = new ArrayList<String>();
+		
+		// Add all of the old messages.
+		Object flashSessionList = servletRequest.getSession().getAttribute("flash");
+		if (flashSessionList instanceof ArrayList<?>) {
+			ArrayList<?> innerFlashSessionList = (ArrayList<?>) flashSessionList;
+			for (Object item : innerFlashSessionList) {
+				if (item instanceof String) {
+					newFlashList.add((String) item);
+				}
 			}
-			context.put("content", tiramisuResponse.getTemplate());
-			context.put("pageTitle", tiramisuResponse.getPageTitle());
-			context.put("STATIC_ROOT", servletRequest.getContextPath() + "/static");
-			velocityTemplate.merge(context, servletResponse.getWriter());
-		} catch (ResourceNotFoundException | ParseErrorException | MethodInvocationException | IOException e) {
-			e.printStackTrace();
+		}
+		
+		// Add all of the new messages.
+		newFlashList.addAll(tiramisuResponse.getFlashMessages());
+		
+		// Overwrite the old session variable with the new session variable.
+		servletRequest.getSession().setAttribute("flash", newFlashList);
+		
+		// If the response code is in the 300 range, no need to create and manage velocity contexts.
+		if (servletResponse.getStatus() < 300 || servletResponse.getStatus() >= 400) {
+
+			// Create the velocity context.
+			VelocityContext context = new VelocityContext();
+
+			// Fetch the template and combine.
+			Template velocityTemplate = velocityEngine.getTemplate("layout.vm");
+			try {
+				// Loop through the assigned keys in the response and render them to
+				// the template.
+				// Using a named array here means you can access by name from the
+				// template.
+				for (String key : tiramisuResponse.getData().keySet()) {
+					context.put(key, tiramisuResponse.getData().get(key));
+				}
+				
+				// Write the flash messages to the context.
+				context.put("messages", servletRequest.getSession().getAttribute("flash"));
+				
+				// Remove those messages from the session once they have been written.
+				servletRequest.getSession().removeAttribute("flash");
+				
+				context.put("content", tiramisuResponse.getTemplate());
+				context.put("pageTitle", tiramisuResponse.getPageTitle());
+				context.put("STATIC_ROOT", servletRequest.getContextPath() + "/static");
+				velocityTemplate.merge(context, servletResponse.getWriter());
+			} catch (ResourceNotFoundException | ParseErrorException | MethodInvocationException | IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
 
 		// Close the hibernate session.
