@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 
+import au.com.ifti.components.FlashComponent;
 import au.com.ifti.models.Model;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
@@ -31,6 +32,11 @@ public abstract class Controller {
 	 * The session object, which will be passed in from the dispatcher.
 	 */
 	protected Session session = null;
+	
+	/**
+	 * The flash component, which enables messages to be rendered to the user.
+	 */
+	protected FlashComponent flash = null;
 
 	/**
 	 * The default constructor for the Controller objects.
@@ -158,6 +164,14 @@ public abstract class Controller {
 
 	public void setResponse(TiramisuResponse response) {
 		this.response = response;
+	}
+	
+	public FlashComponent getFlash() {
+		return flash;
+	}
+	
+	public void setFlash(FlashComponent flash) {
+		this.flash = flash;
 	}
 	
 }

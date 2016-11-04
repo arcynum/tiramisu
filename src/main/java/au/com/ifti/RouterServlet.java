@@ -61,7 +61,7 @@ public class RouterServlet extends HttpServlet {
 		log.info("Initialising servlet");
 		
 		// Load up any context parameters and put them into the configuration object.
-		TiramisuConfiguration.pepper = getInitParameter("pepper");
+		TiramisuConfiguration.pepper = getServletContext().getInitParameter("pepper");
 
 		// Create the velocity properties.
 		Properties props = new Properties();

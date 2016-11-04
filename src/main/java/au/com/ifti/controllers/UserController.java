@@ -18,7 +18,7 @@ public class UserController extends Controller {
 	}
 
 	public TiramisuResponse index() {
-		System.out.println("user Index");
+		System.out.println("User Controller Index Method");
 		List<?> users = findAll(UserModel.class);
 		this.set("users", users);
 		this.getResponse().setTemplate("/users/index.vm");
@@ -26,8 +26,8 @@ public class UserController extends Controller {
 		return this.getResponse();
 	}
 
-	public TiramisuResponse create() throws NotFoundException {
-		System.out.println("user Create");
+	public TiramisuResponse register() throws NotFoundException {
+		System.out.println("User Controller Register Method");
 
 		if (this.request.getMethod() == "POST") {
 			
@@ -36,7 +36,7 @@ public class UserController extends Controller {
 			user.setEmail(this.getRequest().getParameter("user_email"));
 			user.setActive(false);
 			
-			// User the salt and pepper, plus hash, to save the password.
+			// Use the salt and pepper, plus hash, to save the password.
 			String salt = BCrypt.gensalt();
 			user.setSalt(salt);
 			
@@ -51,6 +51,8 @@ public class UserController extends Controller {
 			
 			// Finally save the user.
 			this.save(user);
+			
+			// Redirect to the users index.
 			return this.redirect("/tiramisu/users", 303);
 		}
 
@@ -62,7 +64,7 @@ public class UserController extends Controller {
 	}
 
 	public TiramisuResponse read(String id) throws NotFoundException {
-		System.out.println("user Read");
+		System.out.println("User Controller Index Method");
 		UserModel user = findById(UserModel.class, Integer.parseInt(id));
 		if (user == null) {
 			throw new NotFoundException();
@@ -77,6 +79,42 @@ public class UserController extends Controller {
 		if (this.request.getMethod() == "DELETE") {
 			// Delete a user here.
 		}
+		return this.getResponse();
+	}
+	
+	public TiramisuResponse login() throws NotFoundException {
+		System.out.println("User Controller Login Method");
+
+		if (this.request.getMethod() == "POST") {
+			
+			// Get the provided variables.
+			String username = this.getRequest().getParameter("user_username");
+			String password = this.getRequest().getParameter("user_password");
+			
+			// Load the user up from the database, if they exist.
+			this.getSession().beginTransaction();
+			UserModel user = this.getSession().bySimpleNaturalId(UserModel.class).load(username);
+			this.getSession().getTransaction().commit();
+			
+			if (user != null) {
+				System.out.println(user.getUsername());
+				System.out.println(user.getPassword());
+				
+				// Was the login successful?
+				if (BCrypt.checkpw(password, user.getPassword())) {
+					System.out.println("Login Successful");
+					this.getFlash().set("Login Successful");
+					return this.redirect("/tiramisu/users", 303);
+				}
+			}
+			
+			System.out.println("Login Error");
+		}
+
+		// Render the create form.
+		this.getResponse().setTemplate("/users/login.vm");
+		this.getResponse().setPageTitle("Login");
+
 		return this.getResponse();
 	}
 

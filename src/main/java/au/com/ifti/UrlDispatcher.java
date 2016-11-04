@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hibernate.Session;
 
 import au.com.ifti.controllers.MessageController;
+import au.com.ifti.controllers.UserController;
 import au.com.ifti.exceptions.BadRequestException;
 import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.utilities.TiramisuRequest;
@@ -52,11 +53,29 @@ public class UrlDispatcher {
 
 		try {
 
-			// Post Routes
+			// Message Routes
 			routes.add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class,
 					MessageController.class.getDeclaredMethod("index")));
 			routes.add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"),
 					MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
+			
+			// User Index Method
+			routes.add(new Route(Pattern.compile("^.*/users[/]?"), Arrays.asList("GET"),
+					UserController.class, UserController.class.getDeclaredMethod("index")));
+			
+			// User Read Method
+			routes.add(new Route(Pattern.compile("^.*/users/([0-9]{1,})[/]?"), Arrays.asList("GET"),
+					UserController.class, UserController.class.getDeclaredMethod("read", String.class)));
+			
+			// User Register Method
+			routes.add(new Route(Pattern.compile("^.*/users/register[/]?"), Arrays.asList("GET", "POST"),
+					UserController.class, UserController.class.getDeclaredMethod("register")));
+			
+			// User Login Method
+			routes.add(new Route(Pattern.compile("^.*/users/login[/]?"), Arrays.asList("GET", "POST"),
+					UserController.class, UserController.class.getDeclaredMethod("login")));
+			
+			// User Logout Method.
 
 		} catch (NoSuchMethodException | SecurityException e) {
 			log.log(Level.SEVERE, "The route definitions defined for the web application failed.");
