@@ -42,6 +42,11 @@
 		<servlet-name>Tiramisu</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
+	
+	<context-param>
+		<param-name>pepper</param-name>
+		<param-value><![CDATA[hyvfq1jyns&72-3$8^*mrg_ovqdtrrscf4hss#7uf^]]></param-value>
+	</context-param>
 
 	<!--
 	<listener>

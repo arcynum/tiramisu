@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.ifti.utilities.HibernateUtil;
+import au.com.ifti.utilities.TiramisuConfiguration;
 import au.com.ifti.utilities.TiramisuResponse;
 
 /**
@@ -58,6 +59,9 @@ public class RouterServlet extends HttpServlet {
 	public void init() {
 
 		log.info("Initialising servlet");
+		
+		// Load up any context parameters and put them into the configuration object.
+		TiramisuConfiguration.pepper = getInitParameter("pepper");
 
 		// Create the velocity properties.
 		Properties props = new Properties();

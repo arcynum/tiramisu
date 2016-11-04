@@ -1,0 +1,17 @@
+<form action="/tiramisu/users/create" method="POST">
+	<div>
+		<label for="username">Username:</label>
+		<input type="text" id="username" name="user_username" />
+	</div>
+	<div>
+		<label for="email">Email:</label>
+		<input type="text" id="email" name="user_email" />
+	</div>
+	<div>
+		<label for="password">Password:</label>
+		<input type="password" id="password" name="user_password" />
+	</div>
+	<div>
+		<button type="submit">Create User</button>
+	</div>
+</form>
