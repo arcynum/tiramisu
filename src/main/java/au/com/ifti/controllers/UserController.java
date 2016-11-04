@@ -1,13 +1,13 @@
 package au.com.ifti.controllers;
 
-import java.security.SecureRandom;
 import java.util.List;
-import java.math.BigInteger;
 
 import org.hibernate.Session;
+import org.mindrot.jbcrypt.BCrypt;
 
 import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.models.UserModel;
+import au.com.ifti.utilities.TiramisuConfiguration;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
@@ -30,9 +30,6 @@ public class UserController extends Controller {
 		System.out.println("user Create");
 
 		if (this.request.getMethod() == "POST") {
-
-			SecureRandom random = new SecureRandom();
-			String salt = new BigInteger(70, random).toString();
 			
 			UserModel user = new UserModel();
 			user.setUsername(this.getRequest().getParameter("user_username"));
@@ -40,10 +37,19 @@ public class UserController extends Controller {
 			user.setActive(false);
 			
 			// User the salt and pepper, plus hash, to save the password.
-			String pepper = 
-			user.setPassword(this.getRequest().getParameter("user_password"));
+			String salt = BCrypt.gensalt();
 			user.setSalt(salt);
 			
+			// Combine salt and pepper.
+			String saltAndPepper = salt + TiramisuConfiguration.pepper;
+			
+			// Hash the password.
+			String hash = BCrypt.hashpw(this.getRequest().getParameter("user_password"), saltAndPepper);
+			
+			// Store the hash.
+			user.setPassword(hash);
+			
+			// Finally save the user.
 			this.save(user);
 			return this.redirect("/tiramisu/users", 303);
 		}

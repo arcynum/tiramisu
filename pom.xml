@@ -46,6 +46,11 @@
 			<version>9.4.1211</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.3m</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>tiramisu</finalName>
