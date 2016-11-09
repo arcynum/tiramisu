@@ -97,9 +97,9 @@ public class UserController extends Controller {
 			String password = this.getRequest().getParameter("user_password");
 			
 			// Load the user up from the database, if they exist.
-			this.getSession().beginTransaction();
-			UserModel user = this.getSession().bySimpleNaturalId(UserModel.class).load(username);
-			this.getSession().getTransaction().commit();
+			this.getHibernateSession().beginTransaction();
+			UserModel user = this.getHibernateSession().bySimpleNaturalId(UserModel.class).load(username);
+			this.getHibernateSession().getTransaction().commit();
 			
 			if (user != null) {				
 				// Need to combine the password with the pepper using SHA512 before comparing.

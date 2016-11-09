@@ -28,9 +28,9 @@ public abstract class Controller {
 	protected TiramisuResponse response = null;
 	
 	/**
-	 * The session object, which will be passed in from the dispatcher.
+	 * The Hibernate session object, which will be passed in from the dispatcher.
 	 */
-	protected Session session = null;
+	protected Session hibernateSession = null;
 
 	/**
 	 * The default constructor for the Controller objects.
@@ -41,7 +41,7 @@ public abstract class Controller {
 	public Controller(TiramisuRequest request, TiramisuResponse response, Session session) {
 		this.setRequest(request);
 		this.setResponse(response);
-		this.setSession(session);
+		this.setHibernateSession(session);
 	}
 
 	/**
@@ -50,9 +50,9 @@ public abstract class Controller {
 	 * @return Returns a casted List of objects returned from the database.
 	 */
 	public List<?> findAll(Class<?> classIdentifier) {
-		this.getSession().beginTransaction();
-		List<?> result = this.getSession().createCriteria(classIdentifier).list();
-		this.getSession().getTransaction().commit();
+		this.getHibernateSession().beginTransaction();
+		List<?> result = this.getHibernateSession().createCriteria(classIdentifier).list();
+		this.getHibernateSession().getTransaction().commit();
 		return result;
 	}
 
@@ -63,9 +63,9 @@ public abstract class Controller {
 	 * @return A single object of the type passed into the function.
 	 */
 	public <T extends Model> T findById(Class<T> classIdentifier, Integer id) {
-		this.getSession().beginTransaction();
-		Object result = this.getSession().get(classIdentifier, id);
-		this.getSession().getTransaction().commit();
+		this.getHibernateSession().beginTransaction();
+		Object result = this.getHibernateSession().get(classIdentifier, id);
+		this.getHibernateSession().getTransaction().commit();
 
 		try {
 			return classIdentifier.cast(result);
@@ -80,13 +80,13 @@ public abstract class Controller {
 	 * @return Whether the object saved or not.
 	 */
 	public Boolean save(Model object) {
-		this.getSession().beginTransaction();
+		this.getHibernateSession().beginTransaction();
 		// So the timestamps match. Create a single object.
 		Date now = new Date();
 		object.setCreated(now);
 		object.setModified(now);
-		this.getSession().save(object);
-		this.getSession().getTransaction().commit();
+		this.getHibernateSession().save(object);
+		this.getHibernateSession().getTransaction().commit();
 		return true;
 	}
 
@@ -96,10 +96,10 @@ public abstract class Controller {
 	 * @return Whether the object updated or not.
 	 */
 	public Boolean update(Model object) {
-		this.getSession().beginTransaction();
+		this.getHibernateSession().beginTransaction();
 		object.setModified(new Date());
-		this.getSession().save(object);
-		this.getSession().getTransaction().commit();
+		this.getHibernateSession().save(object);
+		this.getHibernateSession().getTransaction().commit();
 		return true;
 	}
 
@@ -136,12 +136,12 @@ public abstract class Controller {
 		return this.getResponse();
 	}
 	
-	public Session getSession() {
-		return session;
+	public Session getHibernateSession() {
+		return hibernateSession;
 	}
 
-	public void setSession(Session session) {
-		this.session = session;
+	public void setHibernateSession(Session session) {
+		this.hibernateSession = session;
 	}
 
 	public TiramisuRequest getRequest() {
