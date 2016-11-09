@@ -2,6 +2,7 @@ package au.com.ifti.controllers;
 
 import java.util.List;
 
+import org.apache.commons.codec.digest.HmacUtils;
 import org.hibernate.Session;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -40,11 +41,12 @@ public class UserController extends Controller {
 			String salt = BCrypt.gensalt();
 			user.setSalt(salt);
 			
-			// Combine salt and pepper.
-			String saltAndPepper = salt + TiramisuConfiguration.pepper;
+			// Using the apache commons codec library, convert the password and pepper to a hashed password.
+			// Have to use 256 here, because 512 exceeds the max length of BCrypt (which is 
+			String hmacPassword = HmacUtils.hmacSha256Hex(TiramisuConfiguration.pepper, this.getRequest().getParameter("user_password"));
 			
 			// Hash the password.
-			String hash = BCrypt.hashpw(this.getRequest().getParameter("user_password"), saltAndPepper);
+			String hash = BCrypt.hashpw(hmacPassword, salt);
 			
 			// Store the hash.
 			user.setPassword(hash);
@@ -99,12 +101,18 @@ public class UserController extends Controller {
 			UserModel user = this.getSession().bySimpleNaturalId(UserModel.class).load(username);
 			this.getSession().getTransaction().commit();
 			
-			if (user != null) {
-				System.out.println(user.getUsername());
+			if (user != null) {				
+				// Need to combine the password with the pepper using SHA512 before comparing.
+				String hmacPassword = HmacUtils.hmacSha256Hex(TiramisuConfiguration.pepper, password);
+				
+				// Hmac hashed password.
+				System.out.println(hmacPassword);
+				
+				// Whats stored in the database.
 				System.out.println(user.getPassword());
 				
 				// Was the login successful?
-				if (BCrypt.checkpw(password, user.getPassword())) {
+				if (BCrypt.checkpw(hmacPassword, user.getPassword())) {
 					System.out.println("Login Successful");
 					this.getResponse().addFlashMessage("Login Successful");
 					return this.redirect("/tiramisu/users", 303);
@@ -121,5 +129,5 @@ public class UserController extends Controller {
 
 		return this.getResponse();
 	}
-
+	
 }
