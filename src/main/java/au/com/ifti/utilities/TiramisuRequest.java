@@ -82,7 +82,7 @@ public class TiramisuRequest {
 		if (this.parameterMap.get(parameter).length == 1) {
 			return this.parameterMap.get(parameter)[0];
 		}
-		return "";
+		return null;
 	}
 
 	public Map<String, String> getHeaders() {
