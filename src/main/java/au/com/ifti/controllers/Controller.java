@@ -1,10 +1,16 @@
 package au.com.ifti.controllers;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import org.hibernate.Session;
 
+import au.com.ifti.UrlDispatcher;
+import au.com.ifti.components.Component;
+import au.com.ifti.components.SessionComponent;
 import au.com.ifti.models.Model;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
@@ -16,6 +22,11 @@ import au.com.ifti.utilities.TiramisuResponse;
  * @author Chris Hamilton
  */
 public abstract class Controller {
+	
+	/**
+	 * The logging system.
+	 */
+	private static final Logger log = Logger.getLogger(Controller.class.getName());
 
 	/**
 	 * The application wrapped HTTP request object.
@@ -31,17 +42,33 @@ public abstract class Controller {
 	 * The Hibernate session object, which will be passed in from the dispatcher.
 	 */
 	protected Session hibernateSession = null;
+	
+	/**
+	 * An array of components which controllers can use.
+	 * As long as the key exists, the component can be used.
+	 * This might be better of as a bunch of individual members, rather than a map.
+	 */
+	protected Map<String, Component> components = new HashMap<String, Component>();
+	
+	/**
+	 * The session component will be used universally.
+	 * Adding this utility component as a directly owned object.
+	 */
+	protected SessionComponent session = null;
 
 	/**
 	 * The default constructor for the Controller objects.
 	 * @param request
 	 * @param response
-	 * @param session
+	 * @param hibernateSession
 	 */
-	public Controller(TiramisuRequest request, TiramisuResponse response, Session session) {
+	public Controller(TiramisuRequest request, TiramisuResponse response, Session hibernateSession) {
 		this.setRequest(request);
 		this.setResponse(response);
-		this.setHibernateSession(session);
+		this.setHibernateSession(hibernateSession);
+		
+		// Initialise some components.
+		this.addComponent("session", new SessionComponent(request.getSession()));
 	}
 
 	/**
@@ -158,6 +185,39 @@ public abstract class Controller {
 
 	public void setResponse(TiramisuResponse response) {
 		this.response = response;
+	}
+
+	public Map<String, Component> getComponents() {
+		return components;
+	}
+
+	public void setComponents(Map<String, Component> components) {
+		this.components = components;
+	}
+	
+	/**
+	 * Get a component
+	 * @param key The name of the component.
+	 * @return Returns the component or null if the component is not found.
+	 */
+	public Component getComponent(String key) {
+		if (this.components.containsKey(key)) {
+			return this.components.get(key);
+		}
+		return null;
+	}
+	
+	/**
+	 * Add a component to the Map
+	 * @param key The name of the component
+	 * @param component The component to be added.
+	 */
+	public void addComponent(String key, Component component) {
+		if (!this.components.containsKey(key)) {
+			this.components.put(key, component);
+		} else {
+			log.warning("Trying to add a component which already exists");
+		}
 	}
 	
 }

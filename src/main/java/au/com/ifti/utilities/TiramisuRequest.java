@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * The web application request object. This object wraps around the servlet
@@ -33,6 +34,11 @@ public class TiramisuRequest {
 	 * A map of the HTTP request headers.
 	 */
 	private Map<String, String> headers = new HashMap<String, String>();
+	
+	/**
+	 * 
+	 */
+	private HttpSession session;
 
 	/**
 	 * The default constructor for the TiramisuRequest object. This sets the
@@ -45,6 +51,7 @@ public class TiramisuRequest {
 		this.setRequestUri(request.getRequestURI());
 		this.setMethod(request.getMethod());
 		this.setParameterMap(request.getParameterMap());
+		this.setSession(request.getSession());
 	}
 
 	public String getRequestUri() {
@@ -88,6 +95,14 @@ public class TiramisuRequest {
 
 	public void setHeader(String key, String value) {
 		this.headers.put(key, value);
+	}
+
+	public HttpSession getSession() {
+		return session;
+	}
+
+	public void setSession(HttpSession session) {
+		this.session = session;
 	}
 
 }
