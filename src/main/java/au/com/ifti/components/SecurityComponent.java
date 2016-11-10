@@ -26,6 +26,6 @@ public class SecurityComponent extends Component {
 
 	public void setCsrfExpires(Integer csrfExpires) {
 		this.csrfExpires = csrfExpires;
-	} 
+	}
 
 }

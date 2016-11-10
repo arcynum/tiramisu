@@ -72,7 +72,7 @@ public class UrlDispatcher {
 					UserController.class, UserController.class.getDeclaredMethod("register")));
 			
 			// User Login Method
-			routes.add(new Route(Pattern.compile("^.*/users/login[/]?"), Arrays.asList("GET", "POST"),
+			routes.add(new Route(Pattern.compile("^.*/login[/]?"), Arrays.asList("GET", "POST"),
 					UserController.class, UserController.class.getDeclaredMethod("login")));
 			
 			// User Logout Method.

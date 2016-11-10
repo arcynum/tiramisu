@@ -177,7 +177,6 @@ public class RouterServlet extends HttpServlet {
 	 * @param response
 	 */
 	private void addGenericHeaders(HttpServletResponse response) {
-		response.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=UTF-8");
 	}
 	

@@ -8,11 +8,6 @@
 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
-		<welcome-file>index.htm</welcome-file>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>default.html</welcome-file>
-		<welcome-file>default.htm</welcome-file>
-		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 
 	<servlet>
@@ -32,7 +27,7 @@
 		<!-- Load on startup metric -->
 		<load-on-startup>0</load-on-startup>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>/static/*</url-pattern>
@@ -42,16 +37,50 @@
 		<servlet-name>Tiramisu</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<context-param>
 		<param-name>pepper</param-name>
 		<param-value><![CDATA[hyvfq1jyns&72-3$8^*mrg_ovqdtrrscf4hss#7uf^]]></param-value>
 	</context-param>
 
+	<filter>
+		<filter-name>CorsFilter</filter-name>
+		<filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CorsFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 	<!--
-	<listener>
-		<listener-class>net.sf.ehcache.constructs.web.ShutdownListener</listener-class>
-	</listener>
+	<filter>
+		<filter-name>CSRFFilter</filter-name>
+		<filter-class>org.apache.catalina.filters.CsrfPreventionFilter</filter-class>
+		<init-param>
+			<param-name>entryPoints</param-name>
+			<param-value>/,/login</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CSRFFilter</filter-name>
+		<servlet-name>Tiramisu</servlet-name>
+	</filter-mapping>
 	-->
+
+	<filter>
+		<filter-name>SetCharacterEncoding</filter-name>
+		<filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>SetCharacterEncoding</filter-name>
+		<servlet-name>Tiramisu</servlet-name>
+	</filter-mapping>
+
+	<!-- <listener> <listener-class>net.sf.ehcache.constructs.web.ShutdownListener</listener-class> 
+		</listener> -->
 
 </web-app>
