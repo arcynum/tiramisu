@@ -53,9 +53,11 @@ public class UrlDispatcher {
 
 		try {
 
-			// Message Routes
+			// Message Index Method
 			routes.add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class,
 					MessageController.class.getDeclaredMethod("index")));
+			
+			// Message Read Method
 			routes.add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"),
 					MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
 			
