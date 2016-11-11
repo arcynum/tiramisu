@@ -6,7 +6,9 @@ import org.apache.commons.codec.digest.HmacUtils;
 import org.hibernate.Session;
 import org.mindrot.jbcrypt.BCrypt;
 
+import au.com.ifti.Route;
 import au.com.ifti.components.AuthComponent;
+import au.com.ifti.components.annotations.LoginRequired;
 import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.models.UserModel;
 import au.com.ifti.utilities.TiramisuConfiguration;
@@ -31,7 +33,31 @@ public class UserController extends Controller {
 	public UserController(TiramisuRequest request, TiramisuResponse response, Session hibernateSession) {
 		super(request, response, hibernateSession);
 	}
+	
+	/**
+	 * Before method callback for the controller.
+	 * @param route
+	 */
+	public void beforeMethod(Route route) {
+		super.beforeMethod();
+		
+		if (route.getMethod().isAnnotationPresent(LoginRequired.class)) {
+			System.out.println("The login annotation is present");
+			// Need to check if the user is logged in here.
+			if (this.getAuthComponent().loggedIn()) {
+				
+			}
+		}
+	}
+	
+	/**
+	 * After method callback for the controller.
+	 */
+	public void afterMethod() {
+		super.afterMethod();
+	}
 
+	@LoginRequired
 	public TiramisuResponse index() {
 		System.out.println("User Controller Index Method");
 		List<?> users = findAll(UserModel.class);

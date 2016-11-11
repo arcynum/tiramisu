@@ -129,6 +129,9 @@ public class UrlDispatcher {
 						Object controller = route.getController()
 								.getDeclaredConstructor(TiramisuRequest.class, TiramisuResponse.class, Session.class)
 								.newInstance(tiramisuRequest, tiramisuResponse, this.getSession());
+						
+						// Call the before method function callback here.
+						controller.getClass().getMethod("beforeMethod", Route.class).invoke(controller, route);
 
 						// Get the arguments.
 						// Can't used named groups, have to loop through the
@@ -140,6 +143,9 @@ public class UrlDispatcher {
 
 						// Invoke the controller function.
 						tiramisuResponse = (TiramisuResponse) route.getMethod().invoke(controller, arguments);
+						
+						// Call the after method function callback here.
+						controller.getClass().getMethod("afterMethod").invoke(controller);
 
 					} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
 							| IllegalArgumentException e) {

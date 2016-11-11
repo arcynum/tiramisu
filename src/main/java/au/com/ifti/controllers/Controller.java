@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 
 import org.hibernate.Session;
 
-import au.com.ifti.UrlDispatcher;
 import au.com.ifti.components.Component;
 import au.com.ifti.components.SessionComponent;
 import au.com.ifti.models.Model;
@@ -161,6 +160,14 @@ public abstract class Controller {
 		this.getResponse().setStatusCode(code);
 		this.getResponse().setHeader("Location", url);
 		return this.getResponse();
+	}
+	
+	public void beforeMethod() {
+		
+	}
+	
+	public void afterMethod() {
+		
 	}
 	
 	public Session getHibernateSession() {

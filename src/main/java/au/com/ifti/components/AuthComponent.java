@@ -65,6 +65,19 @@ public class AuthComponent extends Component {
 		}
 		return null;
 	}
+	
+	/**
+	 * Check if the user is logged into the system currently.
+	 * This is only checking if they have the correct session key.
+	 * Likely this needs to be more sophisticated.
+	 * @return Boolean True is logged in, false if not.
+	 */
+	public Boolean loggedIn() {
+		if (this.getSessionComponent().read(AuthComponent.sessionKey) != null) {
+			return true;
+		}
+		return false;
+	}
 
 	public TiramisuRequest getRequest() {
 		return request;
