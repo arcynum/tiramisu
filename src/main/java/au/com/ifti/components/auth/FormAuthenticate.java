@@ -1,11 +1,17 @@
 package au.com.ifti.components.auth;
 
+import org.hibernate.Session;
+
 import au.com.ifti.models.UserModel;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
 public class FormAuthenticate extends BaseAuthenicate {
 	
+	public FormAuthenticate(Session hibernateSession) {
+		super(hibernateSession);
+	}
+
 	/**
 	 * Check the fields exist in the HTTP Request.
 	 * @param request The TiramisuRequest object
@@ -27,11 +33,11 @@ public class FormAuthenticate extends BaseAuthenicate {
 	 * @param response
 	 * @return
 	 */
-	protected UserModel authenticate(TiramisuRequest request, TiramisuResponse response) {
+	public UserModel authenticate(TiramisuRequest request, TiramisuResponse response) {
 		if (!checkFields(request, this.getUsernameField(), this.getPasswordField())) {
 			return null;
 		}
-		return findUser(request.getParameter("user_username"));
+		return findUser(request.getParameter(this.getUsernameField()), request.getParameter(this.getPasswordField()));
 	}
 
 }

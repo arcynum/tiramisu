@@ -6,6 +6,7 @@ import org.apache.commons.codec.digest.HmacUtils;
 import org.hibernate.Session;
 import org.mindrot.jbcrypt.BCrypt;
 
+import au.com.ifti.components.AuthComponent;
 import au.com.ifti.exceptions.NotFoundException;
 import au.com.ifti.models.UserModel;
 import au.com.ifti.utilities.TiramisuConfiguration;
@@ -13,9 +14,22 @@ import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
 public class UserController extends Controller {
+	
+	/**
+	 * Import the auth component to be used in this controller.
+	 * If this was needed for all controllers, it would be in the parent controller instead.
+	 * Handing in the request and response objects.
+	 */
+	private AuthComponent authComponent = new AuthComponent(this.getRequest(), this.getResponse(), this.getHibernateSession());
 
-	public UserController(TiramisuRequest request, TiramisuResponse response, Session session) {
-		super(request, response, session);
+	/**
+	 * AuthComponent constructor.
+	 * @param request TiramisuRequest object
+	 * @param response TiramisuResponse object
+	 * @param hibernateSession The database session.
+	 */
+	public UserController(TiramisuRequest request, TiramisuResponse response, Session hibernateSession) {
+		super(request, response, hibernateSession);
 	}
 
 	public TiramisuResponse index() {
@@ -92,31 +106,10 @@ public class UserController extends Controller {
 
 		if (this.request.getMethod() == "POST") {
 			
-			// Get the provided variables.
-			String username = this.getRequest().getParameter("user_username");
-			String password = this.getRequest().getParameter("user_password");
-			
-			// Load the user up from the database, if they exist.
-			this.getHibernateSession().beginTransaction();
-			UserModel user = this.getHibernateSession().bySimpleNaturalId(UserModel.class).load(username);
-			this.getHibernateSession().getTransaction().commit();
-			
-			if (user != null) {				
-				// Need to combine the password with the pepper using SHA512 before comparing.
-				String hmacPassword = HmacUtils.hmacSha256Hex(TiramisuConfiguration.pepper, password);
-				
-				// Hmac hashed password.
-				System.out.println(hmacPassword);
-				
-				// Whats stored in the database.
-				System.out.println(user.getPassword());
-				
-				// Was the login successful?
-				if (BCrypt.checkpw(hmacPassword, user.getPassword())) {
-					System.out.println("Login Successful");
-					this.getResponse().addFlashMessage("Login Successful");
-					return this.redirect("/tiramisu/users", 303);
-				}
+			if (this.getAuthComponent().login()) {
+				System.out.println("User Controller: Login Successful");
+				this.getResponse().addFlashMessage("User Controller: Login Successful");
+				return this.redirect("/tiramisu/users", 303);
 			}
 			
 			System.out.println("Login Error");
@@ -128,6 +121,10 @@ public class UserController extends Controller {
 		this.getResponse().setPageTitle("Login");
 
 		return this.getResponse();
+	}
+
+	public AuthComponent getAuthComponent() {
+		return authComponent;
 	}
 	
 }
