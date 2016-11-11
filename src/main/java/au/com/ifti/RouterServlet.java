@@ -2,6 +2,7 @@ package au.com.ifti;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -91,6 +92,13 @@ public class RouterServlet extends HttpServlet {
 	protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
 		log.info("Processing request");
+		
+		// Temporarily printing session data.
+		Enumeration<String> en = servletRequest.getSession().getAttributeNames();
+		while (en.hasMoreElements()) {
+			String key = (String)en.nextElement();
+			System.out.println(key + " = " + servletRequest.getSession().getAttribute(key));
+		}
 
 		// Open a database session and pass it to the dispatcher.
 		// Manual handling the session for the request lifecycle is better.

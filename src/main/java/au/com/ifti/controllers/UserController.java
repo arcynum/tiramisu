@@ -122,6 +122,15 @@ public class UserController extends Controller {
 
 		return this.getResponse();
 	}
+	
+	/**
+	 * Log the user out of the system.
+	 * The AuthComponent will return the location where to redirect to after logout.
+	 * @return TiramisuResponse The redirection location.
+	 */
+	public TiramisuResponse logout() {
+		return this.redirect(this.getAuthComponent().logout());
+	}
 
 	public AuthComponent getAuthComponent() {
 		return authComponent;

@@ -34,9 +34,11 @@ public abstract class BaseAuthenicate {
 			String hashedPassword = hashPassword(password);
 			if (BCrypt.checkpw(hashedPassword, user.getPassword())) {
 				System.out.println("BaseAuthenticate: Login Successful");
+				return user;
 			}
 		}
 		
+		System.out.println("BaseAuthenticate: Login Failed, returning null.");
 		return null;
 	}
 	

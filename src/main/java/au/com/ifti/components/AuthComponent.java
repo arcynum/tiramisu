@@ -9,9 +9,12 @@ import au.com.ifti.utilities.TiramisuResponse;
 
 public class AuthComponent extends Component {
 	
+	private static final String sessionKey = "Auth.User";
+	
 	private TiramisuRequest request = null;
 	private TiramisuResponse response = null;
 	private Session hibernateSession = null;
+	private SessionComponent sessionComponent = null;
 	
 	public AuthComponent(TiramisuRequest request, TiramisuResponse response, Session hibernateSession) {
 		super();
@@ -19,6 +22,9 @@ public class AuthComponent extends Component {
 		this.setRequest(request);
 		this.setResponse(response);
 		this.setHibernateSession(hibernateSession);
+		
+		// AuthComponents need to make use of a the session component.
+		this.sessionComponent = new SessionComponent(request.getSession());
 	}
 	
 	/**
@@ -28,10 +34,21 @@ public class AuthComponent extends Component {
 	public Boolean login() {
 		UserModel user = identify();
 		if (user != null) {
-			// Write a session key to indicate being logged on.
+			// Writing the user object to the session.
+			this.getSessionComponent().write(AuthComponent.sessionKey, user);
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * The logout function will destroy the Auth key in the visitors session.
+	 * It will then return the location to redirect the user to.
+	 * @return
+	 */
+	public String logout() {
+		this.getSessionComponent().delete(AuthComponent.sessionKey);
+		return "/tiramisu/login";
 	}
 	
 	/**
@@ -71,6 +88,14 @@ public class AuthComponent extends Component {
 
 	public void setHibernateSession(Session hibernateSession) {
 		this.hibernateSession = hibernateSession;
+	}
+
+	public SessionComponent getSessionComponent() {
+		return sessionComponent;
+	}
+
+	public void setSessionComponent(SessionComponent sessionComponent) {
+		this.sessionComponent = sessionComponent;
 	}
 	
 }

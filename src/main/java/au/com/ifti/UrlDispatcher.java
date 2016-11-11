@@ -76,6 +76,8 @@ public class UrlDispatcher {
 					UserController.class, UserController.class.getDeclaredMethod("login")));
 			
 			// User Logout Method.
+			routes.add(new Route(Pattern.compile("^.*/logout[/]?"), Arrays.asList("GET"),
+					UserController.class, UserController.class.getDeclaredMethod("logout")));
 
 		} catch (NoSuchMethodException | SecurityException e) {
 			log.log(Level.SEVERE, "The route definitions defined for the web application failed.");
