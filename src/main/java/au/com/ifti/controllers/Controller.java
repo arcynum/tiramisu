@@ -72,25 +72,11 @@ public abstract class Controller {
 		// Initialise some components.
 		this.addComponent("session", new SessionComponent(request.getSession()));
 	}
-
-	/**
-	 * Find all the objects in the database of the specified type/class.
-	 * @param classIdentifier The object class you want returned.
-	 * @return Returns a casted List of objects returned from the database.
-	 */
-	public List<?> findAllClassic(Class<?> classIdentifier) {
-		this.getHibernateSession().beginTransaction();
-		List<?> result = this.getHibernateSession().createCriteria(classIdentifier).list();
-		this.getHibernateSession().getTransaction().commit();
-		return result;
-	}
 	
 	/**
-	 * Function to findAll which uses templating instead.
-	 * @param <T>
-	 * @param <T>
-	 * @param classIdentifier
-	 * @return
+	 * Generic function which is used fetch all entities of a type from the database. 
+	 * @param classIdentifier The class which is being fetched.
+	 * @return List<T> A list of the entities retrieved. 
 	 */
 	public <T extends Model> List<T> findAll(Class<T> classIdentifier) {
 		this.getHibernateSession().beginTransaction();
