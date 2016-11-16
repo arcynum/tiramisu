@@ -60,7 +60,7 @@ public class UserController extends Controller {
 	@LoginRequired
 	public TiramisuResponse index() {
 		System.out.println("User Controller Index Method");
-		List<?> users = findAll(UserModel.class);
+		List<UserModel> users = findAll(UserModel.class);
 		this.set("users", users);
 		this.getResponse().setTemplate("/users/index.vm");
 		this.getResponse().setPageTitle("Users Index");

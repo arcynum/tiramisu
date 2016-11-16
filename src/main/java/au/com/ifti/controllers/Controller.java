@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.Session;
 
 import au.com.ifti.components.Component;
@@ -75,9 +78,26 @@ public abstract class Controller {
 	 * @param classIdentifier The object class you want returned.
 	 * @return Returns a casted List of objects returned from the database.
 	 */
-	public List<?> findAll(Class<?> classIdentifier) {
+	public List<?> findAllClassic(Class<?> classIdentifier) {
 		this.getHibernateSession().beginTransaction();
 		List<?> result = this.getHibernateSession().createCriteria(classIdentifier).list();
+		this.getHibernateSession().getTransaction().commit();
+		return result;
+	}
+	
+	/**
+	 * Function to findAll which uses templating instead.
+	 * @param <T>
+	 * @param <T>
+	 * @param classIdentifier
+	 * @return
+	 */
+	public <T extends Model> List<T> findAll(Class<T> classIdentifier) {
+		this.getHibernateSession().beginTransaction();
+		CriteriaQuery<T> criteriaQuery = this.getHibernateSession().getCriteriaBuilder().createQuery(classIdentifier);
+		Root<T> root = criteriaQuery.from(classIdentifier);
+		criteriaQuery.select(root);
+		List<T> result = this.getHibernateSession().createQuery(criteriaQuery).getResultList();
 		this.getHibernateSession().getTransaction().commit();
 		return result;
 	}
