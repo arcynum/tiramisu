@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+
+		<!-- Make Hibernate use sane modern settings for sequences -->
+		<property name="hibernate.id.new_generator_mappings">true</property>
+
+		<!-- Database connection settings -->
+		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+		<property name="hibernate.connection.url">jdbc:postgresql://127.0.0.1:5432/DatabaseName</property>
+		<property name="hibernate.connection.username">username</property>
+		<property name="hibernate.connection.password">password</property>
+
+		<!-- Disable contextual LOB creation, because Postgres doesn't support 
+			it, and this both hastens Hibernate startup and saves a pointless log message 
+			every time the context is loaded. -->
+		<property name="hibernate.jdbc.lob.non_contextual_creation">true</property>
+
+		<!-- Automatically {'create', 'create-drop', 'update', 'none' and 'validate'} database -->
+		<!-- Values and the effects: create: drop and recreate all mapped tables 
+			on startup update: update the database tables if the model has changed validate: 
+			validate the database tables, but do not change it create-drop: like create, 
+			but also drop the tables when the Hibernate session is closed blank/missing: 
+			do not validate or modify the DB (default) -->
+		<property name="hibernate.hbm2ddl.auto">none</property>
+
+		<!-- SQL dialect -->
+		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</property>
+
+		<!-- Hibernate Logging/SQL configs -->
+		<property name="hibernate.show_sql">false</property>
+        <property name="hibernate.format_sql">false</property>
+        <property name="hibernate.use_sql_comments">false</property>
+        <property name="hibernate.generate_statistics">false</property>
+        <property name="hibernate.session.events.log">false</property>
+
+		<!-- Resource mappings -->
+		<mapping resource="au/com/ifti/models/hibernate/user.hbm.xml" />
+		<mapping resource="au/com/ifti/models/hibernate/post.hbm.xml" />
+		<mapping resource="au/com/ifti/models/hibernate/comment.hbm.xml" />
+
+	</session-factory>
+</hibernate-configuration>
