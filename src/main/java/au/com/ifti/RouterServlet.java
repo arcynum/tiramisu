@@ -45,7 +45,7 @@ public class RouterServlet extends HttpServlet {
 	 * The Velocity Template Engine.
 	 * The servlet owns and makes use of this object. The rest of the application cannot touch templates.
 	 */
-	private VelocityEngine velocityEngine;
+	private VelocityEngine velocityEngine = null;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -82,6 +82,7 @@ public class RouterServlet extends HttpServlet {
 		velocityEngine.init();
 
 		// Attempt to initialise hibernate.
+		// Doing this in servlet initialisation means the first request doesn't have to perform this action.
 		HibernateUtil.getSessionFactory().openSession().close();
 	}
 
