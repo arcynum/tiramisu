@@ -1,4 +1,4 @@
-package dispatcher;
+package au.com.ifti;
 
 import static org.junit.Assert.*;
 
