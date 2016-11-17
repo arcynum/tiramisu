@@ -37,7 +37,7 @@ public class UrlDispatcher {
 	/**
 	 * The list of routes, passing in from the Servlet.
 	 */
-	private ArrayList<Route> routes = null;
+	private ArrayList<Route> routes = new ArrayList<Route>();
 
 	/**
 	 * Create the application without any predefined routes.
@@ -165,6 +165,14 @@ public class UrlDispatcher {
 
 	public void setRoutes(ArrayList<Route> routes) {
 		this.routes = routes;
+	}
+	
+	public void addRoutes(ArrayList<Route> routes) {
+		this.routes.addAll(routes);
+	}
+	
+	public void addRoute(Route route) {
+		this.routes.add(route);
 	}
 
 }
