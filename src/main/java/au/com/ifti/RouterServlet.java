@@ -2,9 +2,11 @@ package au.com.ifti;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +22,10 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.com.ifti.controllers.MessageController;
+import au.com.ifti.controllers.UserController;
 import au.com.ifti.utilities.HibernateUtil;
+import au.com.ifti.utilities.RouteConfiguration;
 import au.com.ifti.utilities.TiramisuConfiguration;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
@@ -31,7 +36,7 @@ import au.com.ifti.utilities.TiramisuResponse;
  * @author Chris Hamilton
  */
 public class RouterServlet extends HttpServlet {
-
+	
 	/**
 	 * Default serial id for the class.
 	 */
@@ -85,6 +90,34 @@ public class RouterServlet extends HttpServlet {
 		// Attempt to initialise hibernate.
 		// Doing this in servlet initialisation means the first request doesn't have to perform this action.
 		HibernateUtil.getSessionFactory().openSession().close();
+		
+		// Add the routes to the application.
+		// These are controlled by the 
+		try {
+			// Message Index Method
+			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("index")));
+			
+			// Message Read Method
+			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
+			
+			// User Index Method
+			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/users[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("index")));
+			
+			// User Read Method
+			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/users/([0-9]{1,})[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("read", String.class)));
+			
+			// User Register Method
+			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/users/register[/]?"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("register")));
+			
+			// User Login Method
+			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/login[/]?"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("login")));
+			
+			// User Logout Method.
+			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/logout[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("logout")));
+		
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -96,6 +129,8 @@ public class RouterServlet extends HttpServlet {
 		// Wrap the standard HttpRequest in the Application Version.
 		TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
 		TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
+		
+		System.out.println(tiramisuRequest.getRequestUri());
 
 		log.info("Processing request");
 		

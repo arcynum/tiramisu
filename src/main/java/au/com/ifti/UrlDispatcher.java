@@ -1,20 +1,15 @@
 package au.com.ifti;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.hibernate.Session;
 
-import au.com.ifti.controllers.MessageController;
-import au.com.ifti.controllers.UserController;
 import au.com.ifti.exceptions.BadRequestException;
 import au.com.ifti.exceptions.NotFoundException;
+import au.com.ifti.utilities.RouteConfiguration;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
@@ -42,47 +37,10 @@ public class UrlDispatcher {
 	/**
 	 * The container of routes which the current request will be checked against.
 	 */
-	private List<Route> routes = new ArrayList<>();
+	// private List<Route> routes = new ArrayList<>();
 	
 	public UrlDispatcher(Session session) {
-
 		this.setSession(session);
-
-		try {
-
-			// Message Index Method
-			this.getRoutes().add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class,
-					MessageController.class.getDeclaredMethod("index")));
-			
-			// Message Read Method
-			this.getRoutes().add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"),
-					MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
-			
-			// User Index Method
-			this.getRoutes().add(new Route(Pattern.compile("^.*/users[/]?"), Arrays.asList("GET"),
-					UserController.class, UserController.class.getDeclaredMethod("index")));
-			
-			// User Read Method
-			this.getRoutes().add(new Route(Pattern.compile("^.*/users/([0-9]{1,})[/]?"), Arrays.asList("GET"),
-					UserController.class, UserController.class.getDeclaredMethod("read", String.class)));
-			
-			// User Register Method
-			this.getRoutes().add(new Route(Pattern.compile("^.*/users/register[/]?"), Arrays.asList("GET", "POST"),
-					UserController.class, UserController.class.getDeclaredMethod("register")));
-			
-			// User Login Method
-			this.getRoutes().add(new Route(Pattern.compile("^.*/login[/]?"), Arrays.asList("GET", "POST"),
-					UserController.class, UserController.class.getDeclaredMethod("login")));
-			
-			// User Logout Method.
-			this.getRoutes().add(new Route(Pattern.compile("^.*/logout[/]?"), Arrays.asList("GET"),
-					UserController.class, UserController.class.getDeclaredMethod("logout")));
-
-		} catch (NoSuchMethodException | SecurityException e) {
-			log.log(Level.SEVERE, "The route definitions defined for the web application failed.");
-			log.log(Level.SEVERE, e.toString(), e);
-		}
-
 	}
 
 	/**
@@ -101,7 +59,7 @@ public class UrlDispatcher {
 		Boolean matched = false;
 
 		// Loop through the routes looking for a match.
-		for (Route route : this.getRoutes()) {
+		for (Route route : RouteConfiguration.getRoutes()) {
 
 			// Do any of the defined routes match the current URI?
 			Matcher m = route.getPattern().matcher(tiramisuRequest.getRequestUri());
@@ -185,14 +143,6 @@ public class UrlDispatcher {
 
 	public void setSession(Session session) {
 		this.session = session;
-	}
-
-	public List<Route> getRoutes() {
-		return routes;
-	}
-
-	public void setRoutes(List<Route> routes) {
-		this.routes = routes;
 	}
 
 }
