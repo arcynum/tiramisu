@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import au.com.ifti.controllers.MessageController;
 import au.com.ifti.controllers.UserController;
 import au.com.ifti.utilities.HibernateUtil;
-import au.com.ifti.utilities.RouteConfiguration;
 import au.com.ifti.utilities.TiramisuConfiguration;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
@@ -52,6 +51,12 @@ public class RouterServlet extends HttpServlet {
 	 * The servlet owns and makes use of this object. The rest of the application cannot touch templates.
 	 */
 	private VelocityEngine velocityEngine = null;
+	
+	/**
+	 * Routes container, which contains all of the URL endpoints for the application.
+	 * This is static because all application users need the same route list.
+	 */
+	private ArrayList<Route> routeList = new ArrayList<Route>();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -95,25 +100,25 @@ public class RouterServlet extends HttpServlet {
 		// These are controlled by the 
 		try {
 			// Message Index Method
-			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("index")));
+			routeList.add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("index")));
 			
 			// Message Read Method
-			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
+			routeList.add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
 			
 			// User Index Method
-			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/users[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("index")));
+			routeList.add(new Route(Pattern.compile("^.*/users[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("index")));
 			
 			// User Read Method
-			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/users/([0-9]{1,})[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("read", String.class)));
+			routeList.add(new Route(Pattern.compile("^.*/users/([0-9]{1,})[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("read", String.class)));
 			
 			// User Register Method
-			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/users/register[/]?"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("register")));
+			routeList.add(new Route(Pattern.compile("^.*/users/register[/]?"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("register")));
 			
 			// User Login Method
-			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/login[/]?"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("login")));
+			routeList.add(new Route(Pattern.compile("^.*/login[/]?"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("login")));
 			
 			// User Logout Method.
-			RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/logout[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("logout")));
+			routeList.add(new Route(Pattern.compile("^.*/logout[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("logout")));
 		
 		} catch (NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
@@ -129,8 +134,6 @@ public class RouterServlet extends HttpServlet {
 		// Wrap the standard HttpRequest in the Application Version.
 		TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
 		TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
-		
-		System.out.println(tiramisuRequest.getRequestUri());
 
 		log.info("Processing request");
 		
@@ -147,7 +150,7 @@ public class RouterServlet extends HttpServlet {
 
 		// Create the application URL Router and pass it the servlet request and
 		// response.
-		UrlDispatcher dispatcher = new UrlDispatcher(session);
+		UrlDispatcher dispatcher = new UrlDispatcher(routeList, session);
 
 		// Dispatch the request to the application.
 		// The response object will be modified in the children, no need to return it.

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -16,7 +17,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import au.com.ifti.utilities.RouteConfiguration;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
@@ -62,7 +62,9 @@ public class UrlDispatcherTest {
 	public void testBadVerbDispatch() {
 		// Add a route, which will have a valid URI, but a bad verb.
 		// Not having a valid Controller and Method is fine, because they will never get called.
-		RouteConfiguration.addRoute(new Route(Pattern.compile("^.*/test[/]?"), Arrays.asList("GET"), null, null));
+		ArrayList<Route> routes = new ArrayList<Route>();
+		routes.add(new Route(Pattern.compile("^.*/test[/]?"), Arrays.asList("GET"), null, null));
+		this.dispatcher.setRoutes(routes);
 		
 		// Mock a real URL for testing.
 		when(request.getRequestUri()).thenReturn("/test");

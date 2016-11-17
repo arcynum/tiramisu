@@ -1,6 +1,7 @@
 package au.com.ifti;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -9,7 +10,6 @@ import org.hibernate.Session;
 
 import au.com.ifti.exceptions.BadRequestException;
 import au.com.ifti.exceptions.NotFoundException;
-import au.com.ifti.utilities.RouteConfiguration;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
@@ -33,13 +33,27 @@ public class UrlDispatcher {
 	 * This does not need to be initialised, as it will be getting assigned.
 	 */
 	private Session session = null;
+	
+	/**
+	 * The list of routes, passing in from the Servlet.
+	 */
+	private ArrayList<Route> routes = null;
 
 	/**
-	 * The container of routes which the current request will be checked against.
+	 * Create the application without any predefined routes.
+	 * @param routes
 	 */
-	// private List<Route> routes = new ArrayList<>();
-	
 	public UrlDispatcher(Session session) {
+		this.setSession(session);
+	}
+	
+	/**
+	 * Create the application with a list of predefined routes.
+	 * @param routes
+	 * @param session
+	 */
+	public UrlDispatcher(ArrayList<Route> routes, Session session) {
+		this.setRoutes(routes);
 		this.setSession(session);
 	}
 
@@ -59,7 +73,7 @@ public class UrlDispatcher {
 		Boolean matched = false;
 
 		// Loop through the routes looking for a match.
-		for (Route route : RouteConfiguration.getRoutes()) {
+		for (Route route : this.getRoutes()) {
 
 			// Do any of the defined routes match the current URI?
 			Matcher m = route.getPattern().matcher(tiramisuRequest.getRequestUri());
@@ -143,6 +157,14 @@ public class UrlDispatcher {
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+
+	public ArrayList<Route> getRoutes() {
+		return routes;
+	}
+
+	public void setRoutes(ArrayList<Route> routes) {
+		this.routes = routes;
 	}
 
 }
