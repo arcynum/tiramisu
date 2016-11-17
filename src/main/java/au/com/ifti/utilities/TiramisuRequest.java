@@ -18,12 +18,12 @@ public class TiramisuRequest {
 	/**
 	 * The HTTP request URI.
 	 */
-	private String requestUri;
+	private String requestUri = null;
 
 	/**
 	 * The HTTP request method.
 	 */
-	private String method;
+	private String method = null;
 
 	/**
 	 * A map of the HTTP request parameters.

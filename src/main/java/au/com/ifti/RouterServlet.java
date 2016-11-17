@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import au.com.ifti.utilities.HibernateUtil;
 import au.com.ifti.utilities.TiramisuConfiguration;
+import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
 /**
@@ -91,6 +92,10 @@ public class RouterServlet extends HttpServlet {
 	 * @see HttpServlet#service()
 	 */
 	protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+		
+		// Wrap the standard HttpRequest in the Application Version.
+		TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
+		TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
 
 		log.info("Processing request");
 		
@@ -110,8 +115,8 @@ public class RouterServlet extends HttpServlet {
 		UrlDispatcher dispatcher = new UrlDispatcher(session);
 
 		// Dispatch the request to the application.
-		// I really only need the response here, so just return it, durr.
-		TiramisuResponse tiramisuResponse = dispatcher.dispatch(servletRequest, servletResponse);
+		// The response object will be modified in the children, no need to return it.
+		dispatcher.dispatch(tiramisuRequest, tiramisuResponse);
 
 		// Apply the generic response headers for this application.
 		// This is not ideal.

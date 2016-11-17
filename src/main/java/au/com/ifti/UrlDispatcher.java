@@ -9,9 +9,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.hibernate.Session;
 
 import au.com.ifti.controllers.MessageController;
@@ -54,31 +51,31 @@ public class UrlDispatcher {
 		try {
 
 			// Message Index Method
-			routes.add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class,
+			this.getRoutes().add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class,
 					MessageController.class.getDeclaredMethod("index")));
 			
 			// Message Read Method
-			routes.add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"),
+			this.getRoutes().add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"),
 					MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
 			
 			// User Index Method
-			routes.add(new Route(Pattern.compile("^.*/users[/]?"), Arrays.asList("GET"),
+			this.getRoutes().add(new Route(Pattern.compile("^.*/users[/]?"), Arrays.asList("GET"),
 					UserController.class, UserController.class.getDeclaredMethod("index")));
 			
 			// User Read Method
-			routes.add(new Route(Pattern.compile("^.*/users/([0-9]{1,})[/]?"), Arrays.asList("GET"),
+			this.getRoutes().add(new Route(Pattern.compile("^.*/users/([0-9]{1,})[/]?"), Arrays.asList("GET"),
 					UserController.class, UserController.class.getDeclaredMethod("read", String.class)));
 			
 			// User Register Method
-			routes.add(new Route(Pattern.compile("^.*/users/register[/]?"), Arrays.asList("GET", "POST"),
+			this.getRoutes().add(new Route(Pattern.compile("^.*/users/register[/]?"), Arrays.asList("GET", "POST"),
 					UserController.class, UserController.class.getDeclaredMethod("register")));
 			
 			// User Login Method
-			routes.add(new Route(Pattern.compile("^.*/login[/]?"), Arrays.asList("GET", "POST"),
+			this.getRoutes().add(new Route(Pattern.compile("^.*/login[/]?"), Arrays.asList("GET", "POST"),
 					UserController.class, UserController.class.getDeclaredMethod("login")));
 			
 			// User Logout Method.
-			routes.add(new Route(Pattern.compile("^.*/logout[/]?"), Arrays.asList("GET"),
+			this.getRoutes().add(new Route(Pattern.compile("^.*/logout[/]?"), Arrays.asList("GET"),
 					UserController.class, UserController.class.getDeclaredMethod("logout")));
 
 		} catch (NoSuchMethodException | SecurityException e) {
@@ -98,17 +95,13 @@ public class UrlDispatcher {
 	 * @param request
 	 * @param response
 	 */
-	public TiramisuResponse dispatch(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+	public TiramisuResponse dispatch(TiramisuRequest tiramisuRequest, TiramisuResponse tiramisuResponse) {
 
-		// Create the request and response objects, only need to return the
-		// response one.
-		TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
-		TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
-
+		// Havn't matched anything yet.
 		Boolean matched = false;
 
 		// Loop through the routes looking for a match.
-		for (Route route : routes) {
+		for (Route route : this.getRoutes()) {
 
 			// Do any of the defined routes match the current URI?
 			Matcher m = route.getPattern().matcher(tiramisuRequest.getRequestUri());
@@ -192,6 +185,14 @@ public class UrlDispatcher {
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+
+	public List<Route> getRoutes() {
+		return routes;
+	}
+
+	public void setRoutes(List<Route> routes) {
+		this.routes = routes;
 	}
 
 }
