@@ -73,9 +73,6 @@ public class RouterServlet extends HttpServlet {
 	public void init() {
 
 		log.info("Initialising servlet");
-		
-		// Load up any context parameters and put them into the configuration object.
-		TiramisuConfiguration.pepper = getServletContext().getInitParameter("pepper");
 
 		// Create the velocity properties.
 		Properties props = new Properties();
@@ -131,11 +128,15 @@ public class RouterServlet extends HttpServlet {
 	 */
 	protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 		
+		log.info("Processing request");
+		
 		// Wrap the standard HttpRequest in the Application Version.
 		TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
 		TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
-
-		log.info("Processing request");
+		
+		// Fetch the pepper from the servlet.
+		// Load up any context parameters and put them into the configuration object.
+		TiramisuConfiguration.pepper = getServletContext().getInitParameter("pepper");
 		
 		// Temporarily printing session data.
 		Enumeration<String> en = servletRequest.getSession().getAttributeNames();

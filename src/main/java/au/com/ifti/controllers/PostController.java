@@ -27,7 +27,7 @@ public class PostController extends Controller {
   public TiramisuResponse create() throws NotFoundException {
     System.out.println("Post Create");
     
-    if (this.request.getMethod() == "POST") {
+    if (this.request.getMethod().equals("POST")) {
       PostModel post = new PostModel();
       post.setTitle(this.getRequest().getParameter("post_title"));
       post.setBody(this.getRequest().getParameter("post_body"));
@@ -62,7 +62,7 @@ public class PostController extends Controller {
       throw new NotFoundException();
     }
     
-    if (this.request.getMethod() == "POST") {
+    if (this.request.getMethod().equals("POST")) {
       post.setTitle(this.getRequest().getParameter("post_title"));
       post.setBody(this.getRequest().getParameter("post_body"));
       this.update(post);

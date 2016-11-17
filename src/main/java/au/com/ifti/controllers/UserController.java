@@ -70,7 +70,7 @@ public class UserController extends Controller {
 	public TiramisuResponse register() throws NotFoundException {
 		System.out.println("User Controller Register Method");
 
-		if (this.request.getMethod() == "POST") {
+		if (this.request.getMethod().equals("POST")) {
 			
 			UserModel user = new UserModel();
 			user.setUsername(this.getRequest().getParameter("user_username"));
@@ -130,7 +130,7 @@ public class UserController extends Controller {
 	public TiramisuResponse login() throws NotFoundException {
 		System.out.println("User Controller Login Method");
 
-		if (this.request.getMethod() == "POST") {
+		if (this.request.getMethod().equals("POST")) {
 			
 			if (this.getAuthComponent().login()) {
 				System.out.println("User Controller: Login Successful");
