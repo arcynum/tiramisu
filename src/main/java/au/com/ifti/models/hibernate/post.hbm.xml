@@ -3,7 +3,12 @@
 <hibernate-mapping package="au.com.ifti.models" schema="CIH221">
 	<class name="PostModel" table="posts">
 		<id name="id" column="id">
-			<generator class="identity" />
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="prefer_sequence_per_entity">true</param> 
+		        <param name="optimizer">none</param>
+		        <param name="increment_size">1</param>
+		        <param name="sequence_name">POST_ID_SEQ</param>
+			</generator>
 		</id>
 		<property name="title" />
 		<property name="body" />
