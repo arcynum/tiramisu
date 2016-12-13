@@ -22,7 +22,6 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.ifti.controllers.MessageController;
 import au.com.ifti.controllers.UserController;
 import au.com.ifti.utilities.HibernateUtil;
 import au.com.ifti.utilities.TiramisuConfiguration;
@@ -96,12 +95,6 @@ public class RouterServlet extends HttpServlet {
 		// Add the routes to the application.
 		// These are controlled by the 
 		try {
-			// Message Index Method
-			routeList.add(new Route(Pattern.compile("^.*/messages[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("index")));
-			
-			// Message Read Method
-			routeList.add(new Route(Pattern.compile("^.*/messages/([0-9]{1,})[/]?"), Arrays.asList("GET"), MessageController.class, MessageController.class.getDeclaredMethod("read", String.class)));
-			
 			// User Index Method
 			routeList.add(new Route(Pattern.compile("^.*/users[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("index")));
 			
