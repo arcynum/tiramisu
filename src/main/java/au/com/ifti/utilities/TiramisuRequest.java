@@ -39,6 +39,12 @@ public class TiramisuRequest {
 	 * 
 	 */
 	private HttpSession session;
+	
+	/**
+	 * The media type of the incoming request.
+	 * This will make use of the http://jsonapi.org/ specification.
+	 */
+	private MediaType mediaType;
 
 	/**
 	 * The default constructor for the TiramisuRequest object. This sets the
@@ -52,6 +58,20 @@ public class TiramisuRequest {
 		this.setMethod(request.getMethod());
 		this.setParameterMap(request.getParameterMap());
 		this.setSession(request.getSession());
+		
+		this.parseMediaType(request);
+	}
+	
+	/**
+	 * Function to parse the incoming request types to determine what is supported.
+	 * @param request The raw servlet HttpRequest object.
+	 * @return The enumeration of the media type.
+	 */
+	private MediaType parseMediaType(HttpServletRequest request) {
+		if (request.getContentType().equals("application/vnd.api+json")) {
+			return MediaType.JSON;
+		}
+		return MediaType.HTML;
 	}
 
 	public String getRequestUri() {
@@ -103,6 +123,14 @@ public class TiramisuRequest {
 
 	public void setSession(HttpSession session) {
 		this.session = session;
+	}
+
+	public MediaType getMediaType() {
+		return mediaType;
+	}
+
+	public void setMediaType(MediaType mediaType) {
+		this.mediaType = mediaType;
 	}
 
 }

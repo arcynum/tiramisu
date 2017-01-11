@@ -92,23 +92,27 @@ public class RouterServlet extends HttpServlet {
 		// Doing this in servlet initialisation means the first request doesn't have to perform this action.
 		HibernateUtil.getSessionFactory().openSession().close();
 		
+		// Fetch the pepper from the servlet.
+		// Load up any context parameters and put them into the configuration object.
+		TiramisuConfiguration.pepper = getServletContext().getInitParameter("pepper");
+		
 		// Add the routes to the application.
 		// These are controlled by the 
 		try {
 			// User Index Method
-			routeList.add(new Route(Pattern.compile("^.*/users[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("index")));
+			routeList.add(new Route(Pattern.compile("^.*\\/users[/]?$"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("index")));
 			
 			// User Read Method
-			routeList.add(new Route(Pattern.compile("^.*/users/([0-9]{1,})[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("read", String.class)));
+			routeList.add(new Route(Pattern.compile("^.*/users/([0-9]{1,})[/]?$"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("read", String.class)));
 			
 			// User Register Method
-			routeList.add(new Route(Pattern.compile("^.*/users/register[/]?"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("register")));
+			routeList.add(new Route(Pattern.compile("^.*/users/register[/]?$"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("register")));
 			
 			// User Login Method
-			routeList.add(new Route(Pattern.compile("^.*/login[/]?"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("login")));
+			routeList.add(new Route(Pattern.compile("^.*/login[/]?$"), Arrays.asList("GET", "POST"), UserController.class, UserController.class.getDeclaredMethod("login")));
 			
 			// User Logout Method.
-			routeList.add(new Route(Pattern.compile("^.*/logout[/]?"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("logout")));
+			routeList.add(new Route(Pattern.compile("^.*/logout[/]?$"), Arrays.asList("GET"), UserController.class, UserController.class.getDeclaredMethod("logout")));
 		
 		} catch (NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
@@ -123,21 +127,15 @@ public class RouterServlet extends HttpServlet {
 		
 		log.info("Processing request");
 		
-		log.info(servletRequest.getContentType());
-		
 		// Wrap the standard HttpRequest in the Application Version.
 		TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
 		TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
-		
-		// Fetch the pepper from the servlet.
-		// Load up any context parameters and put them into the configuration object.
-		TiramisuConfiguration.pepper = getServletContext().getInitParameter("pepper");
 		
 		// Temporarily printing session data.
 		Enumeration<String> en = servletRequest.getSession().getAttributeNames();
 		while (en.hasMoreElements()) {
 			String key = (String)en.nextElement();
-			System.out.println(key + " = " + servletRequest.getSession().getAttribute(key));
+			log.info(key + " = " + servletRequest.getSession().getAttribute(key));
 		}
 
 		// Open a database session and pass it to the dispatcher.
