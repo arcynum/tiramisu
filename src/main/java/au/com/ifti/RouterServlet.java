@@ -123,6 +123,8 @@ public class RouterServlet extends HttpServlet {
 		
 		log.info("Processing request");
 		
+		log.info(servletRequest.getContentType());
+		
 		// Wrap the standard HttpRequest in the Application Version.
 		TiramisuRequest tiramisuRequest = new TiramisuRequest(servletRequest);
 		TiramisuResponse tiramisuResponse = new TiramisuResponse(servletResponse);
