@@ -36,7 +36,7 @@ public class TiramisuRequest {
 	private Map<String, String> headers = new HashMap<String, String>();
 	
 	/**
-	 * 
+	 * The HTTP Session of the request.
 	 */
 	private HttpSession session;
 	
@@ -50,8 +50,7 @@ public class TiramisuRequest {
 	 * The default constructor for the TiramisuRequest object. This sets the
 	 * internal objects for easier consumption.
 	 * 
-	 * @param request
-	 *            the HTTPServletRequest object.
+	 * @param request the HTTPServletRequest object.
 	 */
 	public TiramisuRequest(HttpServletRequest request) {
 		this.setRequestUri(request.getRequestURI());
@@ -59,7 +58,8 @@ public class TiramisuRequest {
 		this.setParameterMap(request.getParameterMap());
 		this.setSession(request.getSession());
 		
-		this.parseMediaType(request);
+		// Parse and store the media type.
+		this.setMediaType(this.parseMediaType(request));
 	}
 	
 	/**
@@ -68,6 +68,9 @@ public class TiramisuRequest {
 	 * @return The enumeration of the media type.
 	 */
 	private MediaType parseMediaType(HttpServletRequest request) {
+		if (request.getContentType() == null) {
+			return MediaType.HTML;
+		}
 		if (request.getContentType().equals("application/vnd.api+json")) {
 			return MediaType.JSON;
 		}

@@ -1,10 +1,8 @@
 package au.com.ifti;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -12,18 +10,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.ifti.controllers.UserController;
+import au.com.ifti.processors.HtmlProcessor;
+import au.com.ifti.processors.Processor;
 import au.com.ifti.utilities.HibernateUtil;
+import au.com.ifti.utilities.MediaType;
 import au.com.ifti.utilities.TiramisuConfiguration;
 import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
@@ -149,92 +145,38 @@ public class RouterServlet extends HttpServlet {
 		// Dispatch the request to the application.
 		// The response object will be modified in the children, no need to return it.
 		dispatcher.dispatch(tiramisuRequest, tiramisuResponse);
-
-		// Apply the generic response headers for this application.
-		// This is not ideal.
-		addGenericHeaders(servletResponse);
-
-		// Add generated headers
-		addGeneratedHeaders(servletResponse, tiramisuResponse);
-
-		// Set the response status code.
-		servletResponse.setStatus(tiramisuResponse.getStatusCode());
 		
-		// New flash array.
-		List<String> newFlashList = new ArrayList<String>();
+		// Now that the request has been dispatched and returned, create the output processor.
+		// Don't forget to add the response objects.
+		Processor outputProcessor = createProcessor(tiramisuRequest.getMediaType(), velocityEngine);
+		outputProcessor.setServletRequest(servletRequest);
+		outputProcessor.setServletResponse(servletResponse);
+		outputProcessor.setTiramisuResponse(tiramisuResponse);
+		outputProcessor.setFlashSessions(servletRequest.getSession().getAttribute("flash"));
 		
-		// Add all of the old messages.
-		Object flashSessionList = servletRequest.getSession().getAttribute("flash");
-		if (flashSessionList instanceof ArrayList<?>) {
-			ArrayList<?> innerFlashSessionList = (ArrayList<?>) flashSessionList;
-			for (Object item : innerFlashSessionList) {
-				if (item instanceof String) {
-					newFlashList.add((String) item);
-				}
-			}
-		}
-		
-		// Add all of the new messages.
-		newFlashList.addAll(tiramisuResponse.getFlashMessages());
-		
-		// Overwrite the old session variable with the new session variable.
-		servletRequest.getSession().setAttribute("flash", newFlashList);
-		
-		// If the response code is in the 300 range, no need to create and manage velocity contexts.
-		if (servletResponse.getStatus() < 300 || servletResponse.getStatus() >= 400) {
-
-			// Create the velocity context.
-			VelocityContext context = new VelocityContext();
-
-			// Fetch the template and combine.
-			Template velocityTemplate = velocityEngine.getTemplate("layout.vm");
-			try {
-				// Loop through the assigned keys in the response and render them to
-				// the template.
-				// Using a named array here means you can access by name from the
-				// template.
-				for (String key : tiramisuResponse.getData().keySet()) {
-					context.put(key, tiramisuResponse.getData().get(key));
-				}
-				
-				// Write the flash messages to the context.
-				context.put("messages", servletRequest.getSession().getAttribute("flash"));
-				
-				// Remove those messages from the session once they have been written.
-				servletRequest.getSession().removeAttribute("flash");
-				
-				context.put("content", tiramisuResponse.getTemplate());
-				context.put("pageTitle", tiramisuResponse.getPageTitle());
-				context.put("STATIC_ROOT", servletRequest.getContextPath() + "/static");
-				velocityTemplate.merge(context, servletResponse.getWriter());
-			} catch (ResourceNotFoundException | ParseErrorException | MethodInvocationException | IOException e) {
-				e.printStackTrace();
-			}
-			
-		}
+		// Finally call the render function to actually process the data into a response.
+		outputProcessor.render();
 
 		// Close the hibernate session.
 		session.close();
 	}
-
-	/**
-	 * Function to add generic headers to the application.
-	 * This will need to change to response with alternate rest types.
-	 * @param response
-	 */
-	private void addGenericHeaders(HttpServletResponse response) {
-		response.setContentType("text/html;charset=UTF-8");
-	}
 	
-	/**
-	 * Function to merge custom headers with the original HttpServletResponse.
-	 * @param servletResponse
-	 * @param tiramisuResponse
-	 */
-	private void addGeneratedHeaders(HttpServletResponse servletResponse, TiramisuResponse tiramisuResponse) {
-		for (String key : tiramisuResponse.getHeaders().keySet()) {
-			servletResponse.setHeader(key, tiramisuResponse.getHeaders().get(key));
+	private Processor createProcessor(MediaType mediaType, VelocityEngine velocityEngine) {
+		Processor processor = null;
+		switch (mediaType) {
+			case HTML: {
+				processor = new HtmlProcessor(velocityEngine);
+				break;
+			}
+			case JSON: {
+				// processor = new JsonProcessor();
+				break;
+			}
+			default: {
+				processor = new HtmlProcessor(velocityEngine);
+			}
 		}
+		return processor;
 	}
 
 	/**
