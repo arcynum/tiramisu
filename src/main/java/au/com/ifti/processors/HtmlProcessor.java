@@ -8,8 +8,12 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HtmlProcessor extends Processor {
+	
+	private final Logger log = LoggerFactory.getLogger(HtmlProcessor.class);
 	
 	private VelocityContext velocityContext = null;
 	private VelocityEngine velocityEngine = null;
@@ -40,6 +44,9 @@ public class HtmlProcessor extends Processor {
 	
 	@Override
 	public void render() {
+		
+		log.info("Rendering using the HtmlProcessor");
+		
 		// Set the response code.
 		this.status();
 		
@@ -53,7 +60,7 @@ public class HtmlProcessor extends Processor {
 		this.flashMessages();
 		
 		// If the response code is in the 300 range, no need to create and manage velocity contexts.
-		if (this.getStatusCode() < 300 || this.getStatusCode() >= 400) {
+		if (this.getTiramisuResponse().getStatusCode() < 300 || this.getTiramisuResponse().getStatusCode() >= 400) {
 
 			// Create the velocity context.
 			this.setVelocityContext(new VelocityContext());

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import au.com.ifti.controllers.UserController;
 import au.com.ifti.processors.HtmlProcessor;
+import au.com.ifti.processors.JsonProcessor;
 import au.com.ifti.processors.Processor;
 import au.com.ifti.utilities.HibernateUtil;
 import au.com.ifti.utilities.MediaType;
@@ -169,7 +170,7 @@ public class RouterServlet extends HttpServlet {
 				break;
 			}
 			case JSON: {
-				// processor = new JsonProcessor();
+				processor = new JsonProcessor();
 				break;
 			}
 			default: {

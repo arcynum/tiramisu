@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.commons.codec.digest.HmacUtils;
 import org.hibernate.Session;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import au.com.ifti.Route;
 import au.com.ifti.components.AuthComponent;
@@ -16,6 +18,11 @@ import au.com.ifti.utilities.TiramisuRequest;
 import au.com.ifti.utilities.TiramisuResponse;
 
 public class UserController extends Controller {
+	
+	/**
+	 * Logger for the class.
+	 */
+	private final Logger log = LoggerFactory.getLogger(UserController.class);
 	
 	/**
 	 * Import the auth component to be used in this controller.
@@ -42,7 +49,7 @@ public class UserController extends Controller {
 		super.beforeMethod();
 		
 		if (route.getMethod().isAnnotationPresent(LoginRequired.class)) {
-			System.out.println("The login annotation is present");
+			log.info("The login annotation is present");
 			// Need to check if the user is logged in here.
 			if (this.getAuthComponent().loggedIn()) {
 				
@@ -59,7 +66,7 @@ public class UserController extends Controller {
 
 	@LoginRequired
 	public TiramisuResponse index() {
-		System.out.println("User Controller Index Method");
+		log.info("User Controller Index Method");
 		List<UserModel> users = findAll(UserModel.class);
 		this.set("users", users);
 		this.getResponse().setTemplate("/users/index.vm");
@@ -68,7 +75,7 @@ public class UserController extends Controller {
 	}
 
 	public TiramisuResponse register() throws NotFoundException {
-		System.out.println("User Controller Register Method");
+		log.info("User Controller Register Method");
 
 		if (this.request.getMethod().equals("POST")) {
 			
@@ -82,7 +89,7 @@ public class UserController extends Controller {
 			user.setSalt(salt);
 			
 			// Using the apache commons codec library, convert the password and pepper to a hashed password.
-			// Have to use 256 here, because 512 exceeds the max length of BCrypt (which is 
+			// Have to use 256 here, because 512 exceeds the max length of BCrypt
 			String hmacPassword = HmacUtils.hmacSha256Hex(TiramisuConfiguration.pepper, this.getRequest().getParameter("user_password"));
 			
 			// Hash the password.
@@ -109,7 +116,7 @@ public class UserController extends Controller {
 	}
 
 	public TiramisuResponse read(String id) throws NotFoundException {
-		System.out.println("User Controller Index Method");
+		log.info("User Controller Index Method");
 		UserModel user = findById(UserModel.class, Integer.parseInt(id));
 		if (user == null) {
 			throw new NotFoundException();
@@ -128,17 +135,17 @@ public class UserController extends Controller {
 	}
 	
 	public TiramisuResponse login() throws NotFoundException {
-		System.out.println("User Controller Login Method");
+		log.info("User Controller Login Method");
 
 		if (this.request.getMethod().equals("POST")) {
 			
 			if (this.getAuthComponent().login()) {
-				System.out.println("User Controller: Login Successful");
+				log.info("User Controller: Login Successful");
 				this.getResponse().addFlashMessage("User Controller: Login Successful");
 				return this.redirect("/tiramisu/users", 303);
 			}
 			
-			System.out.println("Login Error");
+			log.error("Login Error");
 			this.getResponse().addFlashMessage("Login Error");
 		}
 

@@ -10,7 +10,6 @@ import au.com.ifti.utilities.TiramisuResponse;
 
 public abstract class Processor {
 	
-	private Integer statusCode = null;
 	private String contentType = null;
 	private HttpServletRequest servletRequest = null;
 	private HttpServletResponse servletResponse = null;
@@ -54,18 +53,10 @@ public abstract class Processor {
 	}
 	
 	protected void status() {
-		this.getServletResponse().setStatus(this.getStatusCode());
+		this.getServletResponse().setStatus(this.getTiramisuResponse().getStatusCode());
 	}
 	
 	public abstract void render();
-
-	public Integer getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(Integer statusCode) {
-		this.statusCode = statusCode;
-	}
 	
 	public String getContentType() {
 		return contentType;
