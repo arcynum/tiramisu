@@ -16,6 +16,9 @@ public class HtmlProcessor extends Processor {
 
 	public HtmlProcessor(VelocityEngine velocityEngine) {
 		super();
+		
+		// HTML Processor specific constructor items.
+		this.setContentType("text/html; charset=utf-8");
 		this.setVelocityEngine(velocityEngine);
 	}
 
@@ -35,12 +38,13 @@ public class HtmlProcessor extends Processor {
 		this.velocityEngine = velocityEngine;
 	}
 	
+	@Override
 	public void render() {
 		// Set the response code.
 		this.status();
 		
 		// Set the response content type.
-		this.getServletResponse().setContentType("text/html; charset=utf-8");
+		this.getServletResponse().setContentType(this.getContentType());
 		
 		// Set the response headers.
 		this.addHeaders();

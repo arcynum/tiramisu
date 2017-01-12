@@ -10,7 +10,8 @@ import au.com.ifti.utilities.TiramisuResponse;
 
 public abstract class Processor {
 	
-	private Integer statusCode = 200;
+	private Integer statusCode = null;
+	private String contentType = null;
 	private HttpServletRequest servletRequest = null;
 	private HttpServletResponse servletResponse = null;
 	private TiramisuResponse tiramisuResponse = null;
@@ -66,6 +67,14 @@ public abstract class Processor {
 		this.statusCode = statusCode;
 	}
 	
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
 	public HttpServletRequest getServletRequest() {
 		return servletRequest;
 	}
