@@ -1,7 +1,12 @@
 package au.com.ifti.processors;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonProcessor extends Processor {
 	
@@ -31,7 +36,6 @@ public class JsonProcessor extends Processor {
 		// Output same fake data to make sure the swap is working.
 		
 		// Jackson sample.
-		/*
 		JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
 		
 		ObjectNode node = jsonNodeFactory.objectNode();
@@ -45,7 +49,6 @@ public class JsonProcessor extends Processor {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		*/
 	}
 
 }
