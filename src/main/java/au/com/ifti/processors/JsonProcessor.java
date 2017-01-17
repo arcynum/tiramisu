@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -38,14 +39,21 @@ public class JsonProcessor extends Processor {
 		// Jackson sample.
 		JsonNodeFactory jsonNodeFactory = JsonNodeFactory.instance;
 		
-		ObjectNode node = jsonNodeFactory.objectNode();
-		ObjectNode child = jsonNodeFactory.objectNode();
+		// The parent node for the entire JSON response.
+		ObjectNode parentNode = jsonNodeFactory.objectNode();
 		
-		child.put("message", "test");
-		node.set("notification", child);
+		// Create an object mapper to extract the data array.
+		ObjectMapper dataMapper = new ObjectMapper();
+		Object users = this.getTiramisuResponse().getData().get("users");
+		parentNode.set("data", dataMapper.valueToTree(users));
+		
+		// The meta node.
+		ObjectNode meta = jsonNodeFactory.objectNode();
+		meta.put("meta", "meta");
+		parentNode.set("meta", meta);
 		
 		try {
-			this.getServletResponse().getWriter().write(node.toString());
+			this.getServletResponse().getWriter().write(parentNode.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
