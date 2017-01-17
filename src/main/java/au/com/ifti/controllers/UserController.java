@@ -86,7 +86,6 @@ public class UserController extends Controller {
 			
 			// Use the salt and pepper, plus hash, to save the password.
 			String salt = BCrypt.gensalt();
-			user.setSalt(salt);
 			
 			// Using the apache commons codec library, convert the password and pepper to a hashed password.
 			// Have to use 256 here, because 512 exceeds the max length of BCrypt

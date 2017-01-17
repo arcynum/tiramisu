@@ -4,7 +4,6 @@
 			<th>ID</th>
 			<th>Username</th>
 			<th>Email</th>
-			<th>Salt</th>
 			<th>Active</th>
 			<th>Created</th>
 			<th>Modified</th>
@@ -15,7 +14,6 @@
 			<td>$!user.getId()</td>
 			<td>$!user.getUsername()</td>
 			<td>$!user.getEmail()</td>
-			<td>$!user.getSalt()</td>
 			<td>$!user.getActive()</td>
 			<td>$!user.getCreated()</td>
 			<td>$!user.getModified()</td>

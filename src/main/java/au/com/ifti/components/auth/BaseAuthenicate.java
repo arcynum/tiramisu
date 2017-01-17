@@ -2,7 +2,6 @@ package au.com.ifti.components.auth;
 
 import org.apache.commons.codec.digest.HmacUtils;
 import org.hibernate.Session;
-import org.mindrot.jbcrypt.BCrypt;
 
 import au.com.ifti.models.UserModel;
 import au.com.ifti.utilities.TiramisuConfiguration;
@@ -32,7 +31,7 @@ public abstract class BaseAuthenicate {
 		
 		if (user != null) {
 			String hashedPassword = hashPassword(password);
-			if (BCrypt.checkpw(hashedPassword, user.getPassword())) {
+			if (user.checkPassword(hashedPassword)) {
 				System.out.println("BaseAuthenticate: Login Successful");
 				return user;
 			}

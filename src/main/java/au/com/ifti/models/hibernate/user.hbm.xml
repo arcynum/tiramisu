@@ -10,7 +10,6 @@
 		</natural-id>
 		<property name="email" />
 		<property name="password" />
-		<property name="salt" />
 		<property name="active" />
 		<property name="created" />
 		<property name="modified" />

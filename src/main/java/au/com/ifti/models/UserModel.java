@@ -1,5 +1,7 @@
 package au.com.ifti.models;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  * This class represents a single user of the application.
  * 
@@ -25,15 +27,22 @@ public class UserModel extends Model {
 	private String password;
 
 	/**
-	 * The user specific salt used for their password.
-	 */
-	private String salt;
-
-	/**
 	 * A boolean to indicate whether the user is active or not. This will be
 	 * used for email validation.
 	 */
 	private Boolean active;
+	
+	/**
+	 * This method checks whether the entered password matches the objects password.
+	 * @param hashedPassword A String which contains the hashed requester password.
+	 * @return Boolean true if password matches, false if it does not.
+	 */
+	public Boolean checkPassword(String hashedPassword) {
+		if (BCrypt.checkpw(hashedPassword, this.getPassword())) {
+			return true;
+		}
+		return false;
+	}
 
 	public String getUsername() {
 		return username;
@@ -50,21 +59,13 @@ public class UserModel extends Model {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
-	public String getPassword() {
+	
+	private String getPassword() {
 		return password;
 	}
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getSalt() {
-		return salt;
-	}
-
-	public void setSalt(String salt) {
-		this.salt = salt;
 	}
 
 	public Boolean getActive() {
