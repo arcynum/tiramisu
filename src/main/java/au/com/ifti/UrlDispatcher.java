@@ -48,9 +48,9 @@ public class UrlDispatcher {
 	}
 	
 	/**
-	 * Create the application with a list of predefined routes.
-	 * @param routes
-	 * @param session
+	 * Create the URL dispatcher with the list of predefined routes from the Servlet init function.
+	 * @param routes The ArrayList of routes for the application.
+	 * @param session The hibernate session opened for this request.
 	 */
 	public UrlDispatcher(ArrayList<Route> routes, Session session) {
 		this.setRoutes(routes);
@@ -64,8 +64,8 @@ public class UrlDispatcher {
 	 * If no match is found, the it will set the response to 404.
 	 * This function also needs to handle exceptions coming back from the controller.
 	 * 
-	 * @param request
-	 * @param response
+	 * @param request The TiramisuRequest object for the request.
+	 * @param response The TiramisuResponse object for the request.
 	 */
 	public TiramisuResponse dispatch(TiramisuRequest tiramisuRequest, TiramisuResponse tiramisuResponse) {
 
